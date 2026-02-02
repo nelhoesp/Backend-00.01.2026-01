@@ -1,0 +1,32 @@
+Ejercicio35
+
+Algoritmo MayorMenor20
+    Definir num, mayor, menor Como Real
+    Definir i Como Entero
+    
+    
+    Escribir "Ingrese número 1:"
+    Leer num
+    
+    mayor = num
+    menor = num
+    
+   
+    Para i = 2 Hasta 20 Hacer
+        Escribir "Ingrese número ", i, ":"
+        Leer num
+        
+        Si num > mayor Entonces
+            mayor = num
+        Fin Si
+        
+        Si num < menor Entonces
+            menor = num
+        Fin Si
+    Fin Para
+    
+    Escribir ""
+    Escribir "Mayor: ", mayor
+    Escribir "Menor: ", menor
+    
+FinAlgoritmo

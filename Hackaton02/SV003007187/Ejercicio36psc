@@ -1,0 +1,29 @@
+Ejercicio36 
+
+Algoritmo SerieFibonacci
+    Definir terminos, primero, segundo, siguiente, i Como Entero
+    
+    Escribir "¿Cuántos términos?"
+    Leer terminos
+    
+    primero = 0
+    segundo = 1
+    
+    Escribir "Serie:"
+    
+    Si terminos >= 1 Entonces
+        Escribir primero
+    Fin Si
+    
+    Si terminos >= 2 Entonces
+        Escribir segundo
+    Fin Si
+    
+    Para i = 3 Hasta terminos Hacer
+        siguiente = primero + segundo
+        Escribir siguiente
+        primero = segundo
+        segundo = siguiente
+    Fin Para
+    
+FinAlgoritmo
