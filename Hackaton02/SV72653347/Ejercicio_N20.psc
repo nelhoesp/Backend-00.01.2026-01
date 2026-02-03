@@ -1,12 +1,12 @@
 Proceso Ejercicio_N20
-///Hacer un algoritmo en Pseint que que lea 4 números enteros positivos y verifique y 
+///Hacer un algoritmo en Pseint que que lea 4 nï¿½meros enteros positivos y verifique y 
 ///realice las siguientes operaciones:
-///¿Cuántos números son Pares?
-///¿Cuál es el mayor de todos?
+///ï¿½Cuï¿½ntos nï¿½meros son Pares?
+///ï¿½Cuï¿½l es el mayor de todos?
 ///Si el tercero es par, calcular el cuadrado del segundo.		
-///Si el primero es menor que el cuarto, calcular la media de los 4 números.
+///Si el primero es menor que el cuarto, calcular la media de los 4 nï¿½meros.
 ///Si el segundo es mayor que el tercero, verificar si el tercero esta comprendido entre los valores 50 y 700. 
-///Si cumple se cumple la segunda condición, calcular la suma de los 4 números.
+///Si cumple se cumple la segunda condiciï¿½n, calcular la suma de los 4 nï¿½meros.
 	
 		Definir n1, n2, n3, n4 Como Entero
 		Definir pares, mayor, suma Como Entero
@@ -35,7 +35,7 @@ Proceso Ejercicio_N20
 			pares=pares + 1
 		FinSi
 		
-		Escribir "Cantidad de números pares: ", pares
+		Escribir "Cantidad de nï¿½meros pares: ", pares
 		mayor = n1
 		
 		Si n2 > mayor Entonces
@@ -48,7 +48,7 @@ Proceso Ejercicio_N20
 			mayor = n4
 		FinSi
 		
-		Escribir "El número mayor es: ", mayor
+		Escribir "El nï¿½mero mayor es: ", mayor
 		
 		Si n3 mod 2 = 0 Entonces
 			Escribir "El cuadrado del segundo numero es: ", n2 * n2
