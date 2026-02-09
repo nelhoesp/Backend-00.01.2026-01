@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackaton03</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Hackaton 03</h1>
+    <div class="grid">
+        <div>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(0)">Ejercicio.01</button>
+                <button class="tab" onclick="showTab(1)">Ejercicio.02</button>
+                <button class="tab" onclick="showTab(2)">Ejercicio.03</button>
+                <button class="tab" onclick="showTab(3)">Ejercicio.04</button>
+                <button class="tab" onclick="showTab(4)">Ejercicio.05</button>
+                <button class="tab" onclick="showTab(5)">Ejercicio.06</button>
+                <button class="tab" onclick="showTab(6)">Ejercicio.07</button>
+                <button class="tab" onclick="showTab(7)">Ejercicio.08</button>
+                <button class="tab" onclick="showTab(8)">Ejercicio.09</button>
+                <button class="tab" onclick="showTab(9)">Ejercicio.10</button>
+                <button class="tab" onclick="showTab(10)">Ejercicio.11</button>
+                <button class="tab" onclick="showTab(11)">Ejercicio.12</button>
+                <button class="tab" onclick="showTab(12)">Ejercicio.13</button>
+                <button class="tab" onclick="showTab(13)">Ejercicio.14</button>
+                <button class="tab" onclick="showTab(14)">Ejercicio.15</button>
+                <button class="tab" onclick="showTab(15)">Ejercicio.16</button>
+                <button class="tab" onclick="showTab(16)">Ejercicio.17</button>
+                <button class="tab" onclick="showTab(17)">Ejercicio.18</button>
+                <button class="tab" onclick="showTab(18)">Ejercicio.19</button>
+                <button class="tab" onclick="showTab(19)">Ejercicio.20</button>
+                <button class="tab" onclick="showTab(20)">Ejercicio.21</button>
+                <button class="tab" onclick="showTab(21)">Ejercicio.22</button>
+                <button class="tab" onclick="showTab(22)">Ejercicio.23</button>
+                <button class="tab" onclick="showTab(23)">Ejercicio.24</button>
+                <button class="tab" onclick="showTab(24)">Ejercicio.25</button>
+                <button class="tab" onclick="showTab(25)">Ejercicio.26</button>
+                <button class="tab" onclick="showTab(26)">Ejercicio.27</button>
+                <button class="tab" onclick="showTab(27)">Ejercicio.28</button>
+                <button class="tab" onclick="showTab(28)">Ejercicio.29</button>
+                <button class="tab" onclick="showTab(29)">Ejercicio.30</button>
+                <button class="tab" onclick="showTab(30)">Ejercicio.31</button>
+                <button class="tab" onclick="showTab(31)">Ejercicio.32</button>
+                <button class="tab" onclick="showTab(32)">Ejercicio.33</button>
+                <button class="tab" onclick="showTab(33)">Ejercicio.34</button>
+                <button class="tab" onclick="showTab(34)">Ejercicio.35</button>
+                <button class="tab" onclick="showTab(35)">Ejercicio.36</button>
+                <button class="tab" onclick="showTab(36)">Ejercicio.37</button>
+                <button class="tab" onclick="showTab(37)">Ejercicio.38</button>
+                <button class="tab" onclick="showTab(38)">Ejercicio.39</button>
+                <button class="tab" onclick="showTab(39)">Ejercicio.40</button>
+            </div>
+            <br>
+            <div class="inputs">
+                <button class="tab clear-btn" onclick="limpiarTodo()">Limpiar Todo</button>
+            </div>
+
+        </div>
+        <div>
+            <!-- EJERCICIOS 1 AL 10 -->
+            <!-- EJERCICIO 1 -->
+            <div class="tab-content active">
+                <div class="card">
+                    <div class="card-body">
+                        <p>1. Hacer un algoritmo en JavaScript que lea un número por el teclado y determinar si tiene
+                            tres
+                            dígitos.
+                        </p>
+                        <pre>
+function ej1() {
+    let n;
+    n = Number(document.getElementById("e1").value);
+
+    if (n >= 100 && n <= 999) {
+        document.getElementById("r1").textContent = "Tiene tres dígitos";
+    } else {
+        if (n <= -100 && n >= -999) {
+            document.getElementById("r1").textContent = "Tiene tres dígitos";
+        } else {
+            document.getElementById("r1").textContent = "No tiene tres dígitos";
+        }
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e1" placeholder="Number">
+                            <button onclick="ej1()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r1"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 2 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>2. Hacer un algoritmo en JavaScript que lea un número entero por el teclado y determinar si
+                            es
+                            negativo.</p>
+                        <pre>
+function ej2() {
+    let n;
+    n = Number(document.getElementById("e2").value);
+
+    if (n < 0) {
+        document.getElementById("r2").textContent = "Es negativo";
+    } else {
+        document.getElementById("r2").textContent = "No es negativo";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e2" placeholder="Number">
+                            <button onclick="ej2()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r2"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 3 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>3. Hacer un algoritmo en JavaScript que lea un número y determinar si termina en 4.</p>
+                        <pre>
+function ej3() {
+    let n;
+    let ultimo;
+    n = Number(document.getElementById("e3").value);
+
+    if (n < 0) {
+        n = n * -1;
+    }
+    ultimo = n % 10;
+    if (ultimo == 4) {
+        document.getElementById("r3").textContent = "Termina en 4";
+    } else {
+        document.getElementById("r3").textContent = "No termina en 4";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e3" placeholder="Number">
+                            <button onclick="ej3()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r3"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 4 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>4. Hacer un algoritmo en JavaScript que lea tres números enteros y los muestre de menor a
+                            mayor.
+                        </p>
+                        <pre>
+function ej4() {
+    let a = Number(e4a.value);
+    let b = Number(e4b.value);
+    let c = Number(e4c.value);
+    let x;
+
+    if (a > b) { x = a; a = b; b = x; }
+    if (a > c) { x = a; a = c; c = x; }
+    if (b > c) { x = b; b = c; c = x; }
+
+    r4.textContent = "Ordenados: " + a + ", " + b + ", " + c;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e4a" placeholder="Número 1">
+                            <input type="number" id="e4b" placeholder="Número 2">
+                            <input type="number" id="e4c" placeholder="Número 3">
+                            <button onclick="ej4()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r4"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 5 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>5. Hacer un algoritmo en JavaScript para una tienda de zapatos que tiene una promoción de
+                            descuento
+                            para
+                            vender al mayor, esta dependerá del número de zapatos que se compren. Si son más de diez, se
+                            les
+                            dará un
+                            10% de descuento sobre el total de la compra; si el número de zapatos es mayor de veinte
+                            pero
+                            menor
+                            de
+                            treinta, se le otorga un 20% de descuento; y si son más treinta zapatos se otorgará un 40%
+                            de
+                            descuento.
+                            El precio de cada zapato es de $80.</p>
+                        <pre>
+function ej5() {
+    const c = Number(e5.value);
+    const precio = 80;
+    let desc = 0;
+    if (c > 30) desc = 0.40;
+    else if (c > 20) desc = 0.20;
+    else if (c > 10) desc = 0.10;
+    const total = c * precio * (1 - desc);
+    r5.textContent = `Total a pagar: $${total.toFixed(2)}`;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e5" placeholder="Cantidad">
+                            <button onclick="ej5()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r5"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 6 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>6. Hacer un algoritmo en JavaScript para ayudar a un trabajador a saber cuál será su sueldo
+                            semanal,
+                            se
+                            sabe que si trabaja 40 horas o menos, se le pagará $20 por hora, pero si trabaja más de 40
+                            horas
+                            entonces las horas extras se le pagarán a $25 por hora.</p>
+                        <pre>
+function ej6() {
+    const h = Number(e6.value);
+    let sueldo;
+
+    if (h <= 40) sueldo = h * 20;
+    else sueldo = 40 * 20 + (h - 40) * 25;
+
+    r6.textContent = `Sueldo semanal: $${sueldo}`;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e6" placeholder="Horas trabajadas">
+                            <button onclick="ej6()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r6"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 7 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>7. Hacer un algoritmo en JavaScript para una tienda de helado que da un descuento por compra
+                            a
+                            sus
+                            clientes con membresía dependiendo de su tipo, sólo existen tres tipos de membresía, tipo A,
+                            tipo B
+                            y
+                            tipo C. Los descuentos son los siguientes: Tipo A 10% de descuento Tipo B 15% de descuento
+                            Tipo
+                            C
+                            20% de
+                            descuento</p>
+                        <pre>
+function ej7() {
+    let m;
+    let t;
+    let d;
+    let total;
+    m = Number(e7m.value);
+    t = e7t.value.toUpperCase();
+    d = 0;
+    if (t !== "A" && t !== "B" && t !== "C") {
+        r7.textContent = "Error: el tipo debe ser A, B o C";
+        return;
+    }
+    if (t === "A") {
+        d = 0.10;
+    }
+    if (t === "B") {
+        d = 0.15;
+    }
+    if (t === "C") {
+        d = 0.20;
+    }
+    total = m - (m * d);
+    r7.textContent = "Total: $" + total.toFixed(2);
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e7m" placeholder="Monto">
+                            <input type="text" id="e7t" placeholder="Tipo (A,B,C)">
+                            <button onclick="ej7()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r7"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 8 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>8. Hacer un algoritmo en JavaScript para calcular el promedio de tres notas y determinar si
+                            el
+                            estudiante aprobó o no.</p>
+                        <pre>
+function ej8() {
+    const a = Number(e8a.value);
+    const b = Number(e8b.value);
+    const c = Number(e8c.value);
+
+    if (
+        a < 0 || a > 20 ||
+        b < 0 || b > 20 ||
+        c < 0 || c > 20
+    ) {
+        r8.textContent = "Las notas deben estar entre 0 y 20";
+        return;
+    }
+
+    const p = (a + b + c) / 3;
+    const pr = p.toFixed(1);
+
+    r8.textContent = p >= 11
+        ? `Aprobado con ${pr}`
+        : `Desaprobado con ${pr}`;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e8a" min="0" max="20" placeholder="Nota 1">
+                            <input type="number" id="e8b" min="0" max="20" placeholder="Nota 2">
+                            <input type="number" id="e8c" min="0" max="20" placeholder="Nota 3">
+                            <button onclick="ej8()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r8"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 9 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>9. Hacer un algoritmo en JavaScript para determinar el aumento de un trabajador, se debe
+                            tomar
+                            en
+                            cuenta que si ganaba más de $2000 tendrá un aumento del 5%, si generaba menos de $2000 su
+                            aumento
+                            será
+                            de un 10%.</p>
+                        <pre>
+function ej9() {
+    let sueldo;
+    let aumento;
+    let nuevoSueldo;
+    sueldo = Number(e9.value);
+    if (sueldo > 2000) {
+        aumento = sueldo * 0.05;
+    } else {
+        aumento = sueldo * 0.10;
+    }
+    nuevoSueldo = sueldo + aumento;
+    r9.textContent = "Nuevo sueldo: $" + nuevoSueldo.toFixed(2);
+}
+            </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e9" placeholder="Sueldo">
+                            <button onclick="ej9()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r9"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 10 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>10. Hacer un algoritmo en JavaScript que diga si un número es par o impar.</p>
+                        <pre>
+function ej10() {
+    let n;
+    n = Number(e10.value);
+    if (n % 2 == 0) {
+        r10.textContent = n + " Es par";
+    } else {
+        r10.textContent = n + " Es impar";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e10" placeholder="Number">
+                            <button onclick="ej10()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r10"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EJERCICIOS 11 AL 20 -->
+            <!-- EJERCICIO 11 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>11. Hacer un algoritmo en JavaScript que lea tres números y diga cuál es el mayor.</p>
+                        <pre>
+function ej11() {
+    const a = Number(e11a.value);
+    const b = Number(e11b.value);
+    const c = Number(e11c.value);
+
+    let mayor;
+
+    if (a >= b && a >= c) {
+        mayor = a;
+    } else if (b >= a && b >= c) {
+        mayor = b;
+    } else {
+        mayor = c;
+    }
+    r11.textContent = "El numero Mayor es : " + mayor;
+}
+
+                </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e11a" placeholder="Number 1">
+                            <input type="number" id="e11b" placeholder="Number 2">
+                            <input type="number" id="e11c" placeholder="Number 3">
+                            <button onclick="ej11()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r11"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 12 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>12. Hacer un algoritmo en JavaScript que lea dos números y diga cuál es el mayor.</p>
+                        <pre>
+function ej12() { 
+    const a = Number(e12a.value);
+    const b = Number(e12b.value);
+
+    if (a > b) {
+        r12.textContent = "El numero Mayor es : " + a;
+    } else {
+        r12.textContent = "El numero Mayor es : " + b;
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e12a" placeholder="Number 1">
+                            <input type="number" id="e12b" placeholder="Number 2">
+                            <button onclick="ej12()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r12"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 13 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>13. Hacer un algoritmo en JavaScript que lea una letra y diga si es una vocal.</p>
+                        <pre>
+function ej13() { 
+    const l = e13.value.toLowerCase();
+
+    if (l === "a" || l === "e" || l === "i" || l === "o" || l === "u") {
+        r13.textContent = l + " Es vocal";
+    } else {
+        r13.textContent = l + " No es vocal";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="text" id="e13" maxlength="1" placeholder="Letra">
+                            <button onclick="ej13()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r13"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 14 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>14. Hacer un algoritmo en JavaScript que lea un entero positivo del 1 al diez y al 9 y
+                            determine
+                            si
+                            es un número primo.</p>
+                        <pre>
+function ej14() {
+    const n = Number(e14.value);
+    let d = 0;
+
+    for (let i = 1; i <= n; i++) {
+        if (n % i === 0) {
+            d++;
+        }
+    }
+
+    if (d === 2) {
+        r14.textContent = n + " Es primo";
+    } else {
+        r14.textContent = n +  " No es primo";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e14" placeholder="Number">
+                            <button onclick="ej14()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r14"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 15 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>15. Hacer un algoritmo en JavaScript que convierta centímetros a pulgadas y libras a
+                            kilogramos.
+                        </p>
+                        <pre>
+function ej15() {
+    const cm = Number(e15c.value);
+    const lb = Number(e15l.value);
+
+    let pulgadas = cm / 2.54;
+    let kilos = lb * 0.453;
+
+    pulgadas = Math.round(pulgadas * 100) / 100;
+    kilos = Math.round(kilos * 100) / 100;
+
+    r15.textContent = pulgadas + " pulgadas | " + kilos + " kg";
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e15c" placeholder="cm">
+                            <input type="number" id="e15l" placeholder="lb">
+                            <button onclick="ej15()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r15"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 16 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>16. Hacer un algoritmo en JavaScript que lea un número y según ese número, indique el día que
+                            corresponde.</p>
+                        <pre>
+function ej16() {
+    const n = Number(e16.value);
+    if (n === 1) {
+        r16.textContent = "Lunes";
+    } else if (n === 2) {
+        r16.textContent = "Martes";
+    } else if (n === 3) {
+        r16.textContent = "Miércoles";
+    } else if (n === 4) {
+        r16.textContent = "Jueves";
+    } else if (n === 5) {
+        r16.textContent = "Viernes";
+    } else if (n === 6) {
+        r16.textContent = "Sábado";
+    } else if (n === 7) {
+        r16.textContent = "Domingo";
+    } else {
+        r16.textContent = "Número inválido";
+    }
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e16" placeholder="Number" min="1" max="7">
+                            <button onclick="ej16()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r16"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 17 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>17. Hacer un algoritmo en JavaScript donde se ingrese una hora y nos calcule la hora dentro
+                            de
+                            un
+                            segundo.</p>
+                        <pre>
+function ej17() {
+    let hh = Number(h.value);
+    let mm = Number(m.value);
+    let ss = Number(s.value);
+
+    ss = ss + 1;
+    if (ss === 60) {
+        ss = 0;
+        mm = mm + 1;
+    }
+    if (mm === 60) {
+        mm = 0;
+        hh = hh + 1;
+    }
+    if (hh === 24) {
+        hh = 0;
+    }
+    if (hh < 10) {
+        hh = "0" + hh;
+    }
+    if (mm < 10) {
+        mm = "0" + mm;
+    }
+    if (ss < 10) {
+        ss = "0" + ss;
+    }
+    r17.textContent = hh + ":" + mm + ":" + ss;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="h" placeholder="hh">
+                            <input type="number" id="m" placeholder="mm">
+                            <input type="number" id="s" placeholder="ss">
+                            <button onclick="ej17()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r17"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 18 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>18. Hacer un algoritmo en JavaScript para una empresa se encarga de la venta y distribución
+                            de
+                            CD
+                            vírgenes. Los clientes pueden adquirir los artículos (supongamos un único producto de una
+                            única
+                            marca) por cantidad. Los precios son:</p>
+
+                        <p>$10. Si se compran unidades separadas hasta 9.</p>
+                        <p>$8. Si se compran entre 10 unidades hasta 99.</p>
+                        <p>$7. Entre 100 y 499 unidades.</p>
+                        <p>$6. Para mas de 500 unidades.</p>
+
+                        <p>
+                            La ganancia para el vendedor es de 8,25 % de la venta. Realizar un algoritmo en JavaScript
+                            que
+                            dado
+                            un número de CDs a vender calcule el precio total para el cliente y la ganancia para el
+                            vendedor.
+                        </p>
+                        <pre>
+function ej18() {
+    const c = e18.value;
+    let p = 10;
+    if (c >= 10 && c <= 99) p = 8;
+    else if (c >= 100 && c <= 499) p = 7;
+    else if (c >= 500) p = 6;
+
+    const total = c * p;
+    const gan = (total * 0.0825).toFixed(2);
+    r18.textContent = `Total: $${total} | Ganancia: $${gan}`;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e18" placeholder="Cantidad">
+                            <button onclick="ej18()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r18"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 19 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>19. Hacer un algoritmo en JavaScript para una heladería se tienen 4 tipos de empleados
+                            ordenados
+                            de
+                            la siguiente forma con su número identificador y salario diario correspondiente:</p>
+
+                        <p>1.-Cajero (56$/día).</p>
+                        <p>2.-Servidor (64$/día).</p>
+                        <p>3.-Preparador de mezclas (80$/día).</p>
+                        <p>4.-Mantenimiento (48$/día).</p>
+
+                        <p>El dueño de la tienda desea tener un programa donde sólo ingrese dos números enteros que
+                            representen
+                            al número identificador del empleado y la cantidad de días que trabajó en la semana (6 días
+                            máximos). Y el programa le mostrará por pantalla la cantidad de dinero que el dueño le debe
+                            pagar al
+                            empleado que ingresó</p>
+                        <pre>
+function ej19() {
+    const tipo = Number(e19t.value);
+    const dias = Number(e19d.value);
+    let salario = 0;
+    let pago = 0;
+
+    if (tipo === 1) {
+        salario = 56;
+    } else if (tipo === 2) {
+        salario = 64;
+    } else if (tipo === 3) {
+        salario = 80;
+    } else if (tipo === 4) {
+        salario = 48;
+    } else {
+        r19.textContent = "Tipo de empleado inválido";
+        return;
+    }
+    if (dias < 0 || dias > 6) {
+        r19.textContent = "Cantidad de días inválida";
+        return;
+    }
+    pago = salario * dias;
+    r19.textContent = "Pago: $" + pago;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e19t" placeholder="Tipo">
+                            <input type="number" id="e19d" placeholder="Días">
+                            <button onclick="ej19()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r19"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 20 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>20. Hacer un algoritmo en JavaScript que que lea 4 números enteros positivos y verifique y
+                            realice
+                            las siguientes operaciones:</p>
+
+                        <p>¿Cuántos números son Pares?</p>
+                        <p>¿Cuál es el mayor de todos?</p>
+                        <p>Si el tercero es par, calcular el cuadrado del segundo.</p>
+                        <p>Si el primero es menor que el cuarto, calcular la media de los 4 números.</p>
+
+                        <p>Si el segundo es mayor que el tercero, verificar si el tercero esta comprendido entre los
+                            valores 50
+                            y 700. Si cumple se cumple la segunda condición, calcular la suma de los 4 números.</p>
+                        <pre>
+function ej20() {
+    const a = +a20.value, b = +b20.value, c = +c20.value, d = +d20.value;
+    let pares = [a, b, c, d].filter(x => x % 2 == 0).length;
+    let mayor = Math.max(a, b, c, d);
+    let res = `Pares: ${pares}, Mayor: ${mayor}`;
+
+    if (c % 2 == 0) res += `, Cuadrado 2°: ${b * b}`;
+    if (a < d) res += `, Media: ${(a + b + c + d) / 4}`;
+    if (b > c && c >= 50 && c <= 700) res += `, Suma: ${a + b + c + d}`;
+
+    r20.textContent = res;
+}
+                </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="a20" placeholder="Number 1">
+                            <input type="number" id="b20" placeholder="Number 2">
+                            <input type="number" id="c20" placeholder="Number 3">
+                            <input type="number" id="d20" placeholder="Number 4">
+                            <button onclick="ej20()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r20"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EJERCICIOS 21 AL 30 -->
+            <!-- EJERCICIO 21 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>21. Hacer un algoritmo en JavaScript que permita calcular el factorial de un número.</p>
+                        <pre>
+function ej21() {
+    let n = Number(e21.value);
+    let f = 1;
+    let i;
+    for (i = 1; i <= n; i = i + 1) {
+        f = f * i;
+    }
+    r21.textContent = "Factorial (" + n + "): " + f;
+}
+
+                </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e21" placeholder="Number">
+                            <button onclick="ej21()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r21"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 22 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>22. Hacer un algoritmo en JavaScript para calcular la suma de los n primeros números.</p>
+                        <pre>
+function ej22() {
+    let n = Number(e22.value);
+    let s = 0;
+    let i = 1;
+    while (i <= n) {
+        s = s + i;
+        i = i + 1;
+    }
+    r22.textContent = "Suma (" + n + "): " + s;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e22" placeholder="Number">
+                            <button onclick="ej22()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r22"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 23 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>23. Hacer un algoritmo en JavaScript para calcular la suma de los números impares menores o
+                            iguales
+                            a
+                            n.</p>
+                        <pre>
+function ej23() {
+    let n = Number(e23.value);
+    let s = 0;
+    let i = 1;
+    while (i <= n) {
+        if (i % 2 !== 0) {
+            s = s + i;
+        }
+        i = i + 1;
+    }
+    r23.textContent = "Suma impares: " + s;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e23" placeholder="Number">
+                            <button onclick="ej23()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r23"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 24 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>24. Hacer un algoritmo en JavaScript para realizar la suma de todos los números pares hasta
+                            el
+                            1000.
+                        </p>
+                        <pre>
+function ej24() {
+    let s = 0;
+    let i = 1;
+    while (i <= 1000) {
+        if (i % 2 === 0) {
+            s = s + i;
+        }
+        i = i + 1;
+    }
+    r24.textContent = "Suma pares: " + s;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="ej24()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r24"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 25 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>25. Hacer un algoritmo en JavaScript para calcular el factorial de un número de una forma
+                            distinta.
+                        </p>
+                        <pre>
+function ej25() {
+    let n = Number(e25.value);
+    let f = 1;
+    while (n > 0) {
+        f = f * n;
+        n = n - 1;
+    }
+    r25.textContent = "Factorial: " + f;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e25" placeholder="Number">
+                            <button onclick="ej25()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r25"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 26 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>26. Hacer un algoritmo en JavaScript para calcular el resto y cociente por medio de restas
+                            sucesivas.</p>
+                        <pre>
+function ej26() {
+    let a = Number(e26a.value);
+    let b = Number(e26b.value);
+    let c = 0;
+    while (a >= b) {
+        a = a - b;
+        c = c + 1;
+    }
+    r26.textContent = "Cociente: " + c + " | Resto: " + a;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e26a" placeholder="Dividendo">
+                            <input type="number" id="e26b" placeholder="Divisor">
+                            <button onclick="ej26()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r26"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 27 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>27. Hacer un algoritmo en JavaScript para determinar la media de una lista indefinida de
+                            números
+                            positivos, se debe acabar el programa al ingresar un número negativo.</p>
+                        <pre>
+let suma27 = 0, cont27 = 0;
+function ej27() {
+    const n = +e27.value;
+    if (n < 0) {
+        r27.textContent = "Media: " + (suma27 / cont27).toFixed(2);
+        suma27 = 0; cont27 = 0;
+    } else {
+        suma27 += n; cont27++;
+        r27.textContent = "Ingresados: " + cont27;
+    }
+}
+</pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e27" placeholder="Número">
+                            <button onclick="ej27()">Agregar</button>
+                        </div>
+                        <div class="resultado" id="r27"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 28 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>28. Hacer un algoritmo en JavaScript para calcular la suma de los primeros cien números con
+                            un
+                            ciclo
+                            repetir.</p>
+                        <pre>
+function ej28() {
+    let i = 1;
+    let s = 0;
+    do {
+        s = s + i;
+        i = i + 1;
+    } while (i <= 100);
+    r28.textContent = "Suma: " + s;
+}
+
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="ej28()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r28"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 29 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>29. Hacer un algoritmo en JavaScript para calcular la suma de los primeros cien números con
+                            un
+                            ciclo
+                            mientras.</p>
+                        <pre>
+function ej29() {
+    let i = 1;
+    let s = 0;
+    while (i <= 100) {
+        s = s + i;
+        i = i + 1;
+    }
+    r29.textContent = "Suma: " + s;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="ej29()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r29"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 30 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>30. Hacer un algoritmo en JavaScript para calcular la suma de los primeros cien números con
+                            un
+                            ciclo
+                            para.</p>
+                        <pre>
+function ej30() {
+    let s = 0;
+    for (let i = 1; i <= 100; i = i + 1) {
+        s = s + i;
+    }
+    r30.textContent = "Suma: " + s;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="ej30()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r30"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EJERCICIOS 31 AL 40 -->
+            <!-- EJERCICIO 31 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>31. Hacer un algoritmo en JavaScript parar calcular la media de los números pares e impares,
+                            sólo se ingresará diez números.</p>
+
+                        <pre>
+let arr31 = [];
+
+function gen31() {
+    arr31 = [];
+    let i = 0;
+    let texto = "";
+    let n;
+    while (i < 10) {
+        n = Math.random() * 100;
+        n = n - (n % 1);
+        n = n + 1;
+        arr31[i] = n;
+        if (i === 0) {
+            texto = n;
+        } else {
+            texto = texto + ", " + n;
+        }
+        i = i + 1;
+    }
+    nums31.textContent = "Números: " + texto;
+    r31.textContent = "";
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="gen31()">Generar</button>
+                            <button onclick="ej31()">Calcular</button>
+                        </div>
+
+                        <div class="resultado" id="nums31"></div>
+                        <div class="resultado" id="r31"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 32 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>
+                            32. Se quiere saber cuál es la ciudad con la población de más personas,
+                            son tres provincias y once ciudades.
+                        </p>
+                        <pre>
+function ej32() {
+    // Validar que haya al menos una ciudad en la tabla
+    if (ciudadesSeleccionadas.length === 0) {
+        document.getElementById("r32").textContent = "No hay ciudades agregadas";
+        return;
+    }
+    let maxP = 0;
+    let maxC = "";
+    let maxProv = "";
+    let maxIndex = -1;
+
+    for (let i = 0; i < ciudadesSeleccionadas.length; i++) {
+        if (ciudadesSeleccionadas[i].poblacion > maxP) {
+            maxP = ciudadesSeleccionadas[i].poblacion;
+            maxC = ciudadesSeleccionadas[i].ciudad;
+            maxProv = ciudadesSeleccionadas[i].prov;
+            maxIndex = i;
+        }
+    }
+    let tabla = document.getElementById("tablaCiudades");
+    for (let i = 1; i < tabla.rows.length; i++) {
+        tabla.rows[i].style.backgroundColor = "";
+        tabla.rows[i].style.fontWeight = "";
+    }
+    if (maxIndex >= 0) {
+        tabla.rows[maxIndex + 1].style.backgroundColor = "#90EE90";
+        tabla.rows[maxIndex + 1].style.fontWeight = "bold";
+    }
+    document.getElementById("r32").textContent =
+        "Ciudad con mayor población: " +
+        maxC + " (" + maxProv + ") - " +
+        maxP + " habitantes";
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <!-- Selectores para elegir provincia y ciudad -->
+                        <div class="inputs"
+                            style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Provincia:</label>
+                                <select id="provincia" onchange="cargarCiudades()"
+                                    style="width: 100%; height:40px; border-radius: 5px;">
+                                    <option value="">Seleccione provincia</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Ciudad:</label>
+                                <select id="ciudad" onchange="mostrarPoblacion()"
+                                    style="width: 100%; height:40px; border-radius: 5px;">
+                                    <option value="">Seleccione ciudad</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Población:</label>
+                                <input type="text" id="poblacion" readonly style="width: 100%;">
+                            </div>
+                            <div>
+                                <button id="btnAgregar" onclick="agregarCiudad()">Agregar</button>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <!-- Tabla donde se agregarán las ciudades seleccionadas -->
+                        <table border="1" width="100%" id="tablaCiudades">
+                            <tr>
+                                <th>Provincia</th>
+                                <th>Ciudad</th>
+                                <th>Población</th>
+                            </tr>
+                        </table>
+
+                        <br>
+                        <div class="inputs">
+                            <button onclick="ej32()">Calcular Ciudad con Mayor Población</button>
+                        </div>
+                        <div class="resultado" id="r32"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 33 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>33. Hacer un algoritmo en JavaScript que permita al usuario continuar con el programa.</p>
+                        <pre>
+const r33 = document.getElementById("r33");
+
+function cont33() {
+    r33.textContent = "Ha elegido continuar";
+}
+
+function cancel33() {
+    r33.textContent = "Ha elegido cancelar";
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="cont33()">Continuar</button>
+                            <button onclick="cancel33()">Cancelar</button>
+                        </div>
+
+                        <div class="resultado" id="r33"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 34 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>34. Hacer un algoritmo en JavaScript que imprima la tabla de multiplicar de los números del
+                            uno
+                            al
+                            nueve.</p>
+                        <pre>
+function ej34() {
+    let t = "";
+    for (let i = 1; i <= 9; i++) {
+        t = t + "<tr>";
+        for (let j = 1; j <= 9; j++) {
+            t = t + "<td>" + i + " x " + j + " = " + (i * j) + "</td>";
+        }
+        t = t + "</tr>";
+    }
+    r34.innerHTML = t;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="ej34()">Ejecutar</button>
+                        </div>
+                        <div class="resultado">
+                            <table id="r34" border="1"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 35 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>
+                            35. Hacer un algoritmo en JavaScript que nos permita saber cuál es el número
+                            mayor y menor, se debe ingresar sólo veinte números.
+                        </p>
+                        <pre>
+const nums35El = document.getElementById("nums35");
+const r35 = document.getElementById("r35");
+let nums35 = [];
+function gen35() {
+    nums35 = [];
+    for (let i = 0; i < 20; i++) {
+        nums35.push(Math.floor(Math.random() * 200) + 1);
+    }
+    nums35El.textContent = `Números: ${nums35.join(", ")}`;
+    r35.textContent = "";
+}
+
+function ej35() {
+    if (nums35.length !== 20) {
+        r35.textContent = "Primero genere los 20 números";
+        return;
+    }
+    r35.textContent =
+        `Numero Mayor: ${Math.max(...nums35)} | Numero Menor: ${Math.min(...nums35)}`;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <button onclick="gen35()">Generar</button>
+                            <button onclick="ej35()">Evaluar</button>
+                        </div>
+                        <div class="resultado" id="nums35"></div>
+                        <div class="resultado" id="r35"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 36 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>36. Hacer un algoritmo en JavaScript para calcular la serie de Fibonacci.</p>
+                        <pre>
+function ej36() {
+    let n = Number(e36.value);
+    let a = 0;
+    let b = 1;
+    let i = 0;
+    let r = "";
+    let temp;
+    while (i < n) {
+        r = r + a + " ";
+        temp = a + b;
+        a = b;
+        b = temp;
+        i = i + 1;
+    }
+    r36.textContent = "Serie Fibonacci de (" + n + "): " + r;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e36" placeholder="Number">
+                            <button onclick="ej36()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r36"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 37 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>37. Hacer un algoritmo en JavaScript para conseguir el M.C.D de un número por medio del
+                            algoritmo de
+                            Euclides.</p>
+                        <pre>
+function ej37() {
+    let a = Number(e37a.value);
+    let b = Number(e37b.value);
+    let paso = 1;
+    let texto = "";
+
+    texto = texto + "Números ingresados:\n";
+    texto = texto + "A = " + a + " | B = " + b + "\n\n";
+    texto = texto + "Pasos:\n";
+    while (b != 0) {
+        let cociente = Math.floor(a / b);
+        let resto = a % b;
+        texto = texto + "Paso " + paso + ": ";
+        texto = texto + a + " ÷ " + b + " = " + cociente;
+        texto = texto + " con resto " + resto + "\n";
+        a = b;
+        b = resto;
+        paso = paso + 1;
+    }
+    texto = texto + "\nEl M.C.D. es: " + a;
+    r37.textContent = texto;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e37a" placeholder="Number">
+                            <input type="number" id="e37b" placeholder="Number">
+                            <button onclick="ej37()">Ejecutar</button>
+                        </div>
+                        <div class="resultado">
+                            <pre id="r37"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 38 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>38. Hacer un algoritmo en JavaScript que nos permita saber si un número es un número
+                            perfecto.
+                        </p>
+                        <pre>
+function ej38() {
+    let n;
+    let suma;
+    let i;
+
+    n = Number(e38.value);
+    suma = 0;
+    i = 1;
+    while (i < n) {
+        if (n % i == 0) {
+            suma = suma + i;
+        }
+        i = i + 1;
+    }
+    if (suma == n) {
+        r38.textContent = "Perfecto";
+    } else {
+        r38.textContent = "No perfecto";
+    }
+}
+
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e38" placeholder="Number">
+                            <button onclick="ej38()">Ejecutar</button>
+                        </div>
+                        <div class="resultado" id="r38"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 39 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>39. Hacer un algoritmo en JavaScript que cumpla con la aproximación del número pi con la
+                            serie
+                            de
+                            Gregory-Leibniz. La formula que se debe aplicar es:</p>
+
+                        <p>Pi = (4/1) - (4/3) + (4/5) - (4/7) + (4/9) - (4/11) + (4/13) - (4/15) ...</p>
+                        <pre>
+function ej39() {
+    let n = Number(e39.value);
+    let pi = 0;
+    let texto = "Términos calculados:\n\n";
+
+    for (let i = 0; i < n; i++) {
+        let signo = (i % 2 === 0 ? 1 : -1);
+        let denominador = 2 * i + 1;
+        let termino = 4 * signo / denominador;
+        pi += termino;
+        if (i < 10) {
+            texto += `Término ${i + 1}: ${signo > 0 ? '+' : ''} 4/${denominador} = ${termino.toFixed(6)}\n`;
+        }
+    }
+    if (n > 10) texto += `...\n\n`;
+    texto += `\nAproximación de π con ${n} términos:\n`;
+    texto += `π ≈ ${pi}\n`;
+    texto += `Valor real de π: ${Math.PI}\n`;
+    texto += `Error: ${Math.abs(Math.PI - pi).toFixed(10)}`;
+
+    r39.textContent = texto; // Usar textContent, NO innerHTML
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e39" placeholder="Number">
+                            <button onclick="ej39()">Ejecutar</button>
+                        </div>
+                        <div class="resultado">
+                            <pre id="r39"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- EJERCICIO 40 -->
+            <div class="tab-content">
+                <div class="card">
+                    <div class="card-body">
+                        <p>40. Hacer un algoritmo en JavaScript que cumpla con la aproximación del número pi con la
+                            serie
+                            de
+                            Nilakantha. La formula que se debe aplicar es:</p>
+
+                        <p>Pi = = 3 + 4/(2*3*4) - 4/(4*5*6) + 4/(6*7*8) - 4/(8*9*10) + 4/(10*11*12) - 4/(12*13*14) ...
+                        </p>
+                        <pre>
+function ej40() {
+    let n = Number(e40.value);
+    let pi = 3;
+    let signo = 1;
+    let texto = "Términos calculados:\n\n";
+    texto += "Término 0: 3\n";
+
+    for (let i = 2, termino = 1; i <= 2 * n; i += 2, termino++) {
+        let denominador = i * (i + 1) * (i + 2);
+        let valor = signo * (4 / denominador);
+        pi += valor;
+        // Mostrar los primeros 10 términos
+        if (termino <= 10) {
+            texto += `Término ${termino}: ${signo > 0 ? '+' : '-'} 4/(${i}×${i+1}×${i+2}) = ${valor.toFixed(8)}\n`;
+        }
+        signo *= -1;
+    }
+    if (n > 10) texto += `...\n\n`;
+    texto += `\nAproximación de π con ${n} términos:\n`;
+    texto += `π ≈ ${pi}\n`;
+    texto += `Valor real de π: ${Math.PI}\n`;
+    texto += `Error: ${Math.abs(Math.PI - pi).toFixed(10)}`;
+
+    r40.textContent = texto;
+}
+                    </pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="inputs">
+                            <input type="number" id="e40" placeholder="Number">
+                            <button onclick="ej40()">Ejecutar</button>
+                        </div>
+                        <div class="resultado">
+                            <pre id="r40"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
