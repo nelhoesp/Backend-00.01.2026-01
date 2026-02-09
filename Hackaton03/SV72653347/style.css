@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+}
+
+.botones {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); 
+    
+    gap: 10px;
+    justify-content: center;
+}

@@ -136,7 +136,7 @@ document.getElementById("btnInicio").addEventListener("click", (e) => {
 
 function ejercicio01() {
 
-    console.log("Inicio del ejercicio 01");
+    console.log("Ejerciocio_N01 ");
     let strNumero = prompt("Ingresa tu numero");
 
     let numero = Number.parseInt(strNumero);
