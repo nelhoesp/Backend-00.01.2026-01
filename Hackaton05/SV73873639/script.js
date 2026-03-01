@@ -138,7 +138,6 @@ function ocultarHistorialModal() {
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     document.removeEventListener('keydown', _escCloseHistorial);
-}
 
 // 2. Limpia el window.onload (quita la creación del modal)
 window.onload = function() {
@@ -531,4 +530,5 @@ function renderizarPanelClientesModerno() {
             </div>
         </div>
     `).reverse().join('');
+}
 }
