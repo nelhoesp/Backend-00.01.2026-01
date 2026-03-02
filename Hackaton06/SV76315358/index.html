@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicio Técnico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+      * { font-family: 'Plus Jakarta Sans', sans-serif; }
+      code, .mono { font-family: 'DM Mono', monospace; }
+
+      :root {
+        --brand:     #2563eb;
+        --brand-lt:  #eff6ff;
+        --brand-mid: #bfdbfe;
+        --success:   #059669;
+        --success-lt:#ecfdf5;
+        --warn:      #d97706;
+        --warn-lt:   #fffbeb;
+        --purple:    #7c3aed;
+        --purple-lt: #f5f3ff;
+        --danger:    #dc2626;
+        --surface:   #ffffff;
+        --surface2:  #f8fafc;
+        --surface3:  #f1f5f9;
+        --border:    #e2e8f0;
+        --border2:   #cbd5e1;
+        --text:      #0f172a;
+        --text2:     #475569;
+        --text3:     #94a3b8;
+      }
+
+      body { background: var(--surface2); color: var(--text); }
+
+     
+      header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      }
+      .logo-icon {
+        width: 42px; height: 42px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(37,99,235,.3);
+      }
+
+
+      aside {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+      }
+      .step-label { font-size: .72rem; font-weight: 600; color: var(--text2); }
+
+      .step-dot {
+        width: 28px; height: 28px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .72rem; font-weight: 800;
+        transition: all .25s ease;
+        flex-shrink: 0;
+      }
+      .step-dot.idle   { background: var(--surface3); border: 2px solid var(--border2); color: var(--text3); }
+      .step-dot.active { background: var(--brand);    border: 2px solid var(--brand);   color: white; box-shadow: 0 0 0 4px var(--brand-mid); }
+      .step-dot.done   { background: var(--success);  border: 2px solid var(--success);  color: white; }
+
+      .step-connector {
+        width: 2px; height: 14px; margin-left: 13px;
+        background: var(--border);
+        transition: background .25s;
+      }
+      .step-connector.done { background: var(--success); }
+
+      
+      #telActivo {
+        background: linear-gradient(135deg, var(--brand-lt), var(--purple-lt));
+        border: 1px solid var(--brand-mid);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .card-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      }
+
+   
+      .field-input {
+        width: 100%;
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: .875rem;
+        color: var(--text);
+        transition: border .2s, box-shadow .2s;
+        outline: none;
+      }
+      .field-input:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px var(--brand-mid);
+        background: var(--surface);
+      }
+      .field-input::placeholder { color: var(--text3); }
+      label.field-label { font-size: .75rem; font-weight: 700; color: var(--text2); margin-bottom: 5px; display: block; }
+
+      
+      .btn-primary-custom {
+        background: var(--brand);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn-primary-custom:hover { background: #1d4ed8; box-shadow: 0 4px 14px rgba(37,99,235,.35); transform: translateY(-1px); }
+
+      .btn-success-custom {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn-success-custom:hover { background: #047857; box-shadow: 0 4px 14px rgba(5,150,105,.3); transform: translateY(-1px); }
+
+      .btn-ghost {
+        background: var(--surface3);
+        color: var(--text2);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn-ghost:hover { background: var(--border); color: var(--text); }
+
+      .btn-warn {
+        background: var(--warn-lt);
+        color: var(--warn);
+        border: 1.5px solid #fde68a;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn-warn:hover { background: #fef3c7; }
+
+      .btn-orange {
+        background: #fff7ed;
+        color: #ea580c;
+        border: 1.5px solid #fed7aa;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+        width: 100%;
+        justify-content: center;
+      }
+      .btn-orange:hover { background: #ffedd5; box-shadow: 0 4px 12px rgba(234,88,12,.15); }
+
+      .btn-info {
+        background: var(--purple-lt);
+        color: var(--purple);
+        border: 1.5px solid #ddd6fe;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn-info:hover { background: #ede9fe; }
+
+      /* ---- STEP HEADER ---- */
+      .step-header-badge {
+        width: 36px; height: 36px;
+        background: linear-gradient(135deg, var(--brand), var(--purple));
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-weight: 800; font-size: .875rem;
+        box-shadow: 0 4px 10px rgba(37,99,235,.25);
+        flex-shrink: 0;
+      }
+
+  
+      .badge-ingresado    { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+      .badge-diagnosticado{ background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+      .badge-autorizado   { background: var(--purple-lt); color: var(--purple); border: 1px solid #ddd6fe; }
+      .badge-reparacion   { background: var(--success-lt); color: var(--success); border: 1px solid #a7f3d0; }
+
+      .tel-info-card {
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex; align-items: center; gap: 14px;
+      }
+      .tel-info-card .tel-icon {
+        width: 44px; height: 44px;
+        background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+        border: 1.5px solid var(--brand-mid);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem;
+      }
+
+    
+      .tec-card {
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 18px;
+        background: var(--surface);
+        cursor: pointer;
+        transition: all .2s;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .tec-card:hover:not(.disabled) { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-mid); }
+      .tec-card.selected { border-color: var(--success); background: var(--success-lt); box-shadow: 0 0 0 3px #a7f3d0; }
+      .tec-card.disabled { opacity: .45; cursor: not-allowed; background: var(--surface3); }
+
+   
+      .repuesto-row {
+        display: flex; justify-content: space-between; align-items: center;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: .875rem;
+      }
+
+      .estacion-row {
+        display: flex; align-items: flex-start; gap: 12px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: border .2s;
+      }
+      .estacion-row.done { border-color: #a7f3d0; background: var(--success-lt); }
+
+      .stat-card {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+      }
+
+    
+      .welcome-step-card {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        transition: all .2s;
+      }
+      .welcome-step-card:hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(37,99,235,.1); transform: translateY(-2px); }
+
+     
+      .alert-blacklist {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: .8rem;
+        color: #dc2626;
+      }
+
+   
+      .auth-check-label {
+        display: flex; align-items: flex-start; gap: 12px;
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all .2s;
+      }
+      .auth-check-label:hover { border-color: var(--success); background: var(--success-lt); }
+      input[type=checkbox] { accent-color: var(--success); width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; }
+
+  
+      .cost-box {
+        background: linear-gradient(135deg, var(--purple-lt), #faf5ff);
+        border: 1.5px solid #ddd6fe;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+     
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: var(--surface2); }
+      ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+    
+      .step-panel { animation: fadeUp .25s ease both; }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+
+  <body>
+    
+    <header class="px-6 py-4 flex items-center gap-3">
+      <div class="logo-icon"><i class="bi bi-hammer"></i></div>
+      <div>
+        <h1 style="font-size:1.15rem; font-weight:800; color:var(--text); margin:0; line-height:1.1;">
+          Servicio Técnico
+        </h1>
+        <p style="font-size:.78rem; color:var(--brand); font-weight:700; margin:0;">
+          Reparación de móviles &nbsp;·&nbsp; <span style="color:var(--text3); font-weight:500;">Soluciones rápidas y confiables</span>
+        </p>
+      </div>
+    </header>
+
+    <div class="flex" style="height: calc(100vh - 65px);">
+      <!-- SIDEBAR -->
+      <aside class="flex flex-col shrink-0 p-5" style="width:220px;">
+        <p style="font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); margin-bottom:14px; text-align:center;">
+          Flujo de reparación
+        </p>
+
+        <div id="stepper" class="flex flex-col"></div>
+
+        <div id="telActivo" class="hidden mt-auto">
+          <p style="font-size:.68rem; font-weight:800; color:var(--brand); margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em;">
+            <i class="bi bi-phone-fill"></i> En flujo
+          </p>
+          <p id="telActivoNombre" style="font-size:.85rem; font-weight:800; color:var(--text); line-height:1.2;"></p>
+          <p id="telActivoSerie" style="font-size:.72rem; color:var(--text3); margin-top:2px;" class="mono"></p>
+          <span id="telActivoEstado" style="display:inline-block; margin-top:6px; font-size:.68rem; font-weight:700; padding:3px 10px; border-radius:99px;"></span>
+        </div>
+      </aside>
+
+      
+      <main class="flex-1 flex flex-col overflow-hidden" style="background:var(--surface2);">
+        <div class="flex-1 overflow-y-auto p-8">
+          <div id="stepContent"></div>
+        </div>
+      </main>
+    </div>
+
+
+    <template id="tpl-0">
+      <div class="max-w-lg mx-auto pt-4 step-panel">
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="width:64px;height:64px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(37,99,235,.3);">
+            <i class="bi bi-hammer" style="font-size:1.8rem;color:white;"></i>
+          </div>
+          <h2 style="font-size:1.6rem;font-weight:800;color:var(--text);margin:0 0 6px;">Bienvenido al sistema</h2>
+          <p style="font-size:.875rem;color:var(--text2);">Sigue los 6 pasos para gestionar la reparación del dispositivo.</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mb-8">
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-1-circle-fill" style="color:var(--brand);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Registrar</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Serie e IMEI</p>
+          </div>
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-2-circle-fill" style="color:var(--brand);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Diagnóstico</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Primera revisión</p>
+          </div>
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-3-circle-fill" style="color:var(--brand);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Autorización</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Firma + abono</p>
+          </div>
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-4-circle-fill" style="color:var(--purple);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Técnico</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Validar skill</p>
+          </div>
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-5-circle-fill" style="color:var(--warn);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Repuestos</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Piezas usadas</p>
+          </div>
+          <div class="welcome-step-card">
+            <div style="font-size:1.4rem;margin-bottom:8px;"><i class="bi bi-6-circle-fill" style="color:var(--success);"></i></div>
+            <p style="font-size:.75rem;font-weight:700;color:var(--text);margin:0 0 2px;">Estado Final</p>
+            <p style="font-size:.68rem;color:var(--text3);margin:0;">Resumen</p>
+          </div>
+        </div>
+
+        <div style="text-align:center;">
+          <button onclick="goStep(1)" class="btn-primary-custom">
+            Comenzar <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </template>
+
+   
+    <template id="tpl-1">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">1</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Registrar Teléfono</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">Valida que el IMEI y número de serie no estén reportados</p>
+          </div>
+        </div>
+
+        <div class="alert-blacklist mb-5">
+          <i class="bi bi-exclamation-octagon-fill"></i>
+          <strong> Lista negra —</strong> Serie: <code>12321321</code> &nbsp;·&nbsp; IMEI: <code>IMEI123123</code>
+        </div>
+
+        <div class="card-panel">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="field-label">Número de Serie</label>
+              <input id="s1_serie" type="text" placeholder="Ej: SN12312312" class="field-input"/>
+            </div>
+            <div>
+              <label class="field-label">IMEI</label>
+              <input id="s1_imei" type="text" placeholder="Ej: IMEI12312312" class="field-input"/>
+            </div>
+            <div>
+              <label class="field-label">Marca</label>
+              <input id="s1_marca" type="text" placeholder="Ej: Samsung" class="field-input"/>
+            </div>
+            <div>
+              <label class="field-label">Modelo</label>
+              <input id="s1_modelo" type="text" placeholder="Ej: Galaxy S22" class="field-input"/>
+            </div>
+            <div class="col-span-2">
+              <label class="field-label">Propietario</label>
+              <input id="s1_prop" type="text" placeholder="Ej: Juan Pérez" class="field-input"/>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-5">
+            <button onclick="step1Action()" class="btn-success-custom">
+              Registrar y continuar <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    
+    <template id="tpl-2">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">2</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Primera Revisión</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">Diagnóstico inicial y costo estimado de reparación</p>
+          </div>
+        </div>
+
+        <div id="s2_telInfo" class="tel-info-card mb-5"></div>
+
+        <div class="card-panel">
+          <div class="mb-4">
+            <label class="field-label">Descripción del problema</label>
+            <textarea id="s2_desc" rows="3" placeholder="Ej: La pantalla está rota y el flex del audio dañado..." class="field-input" style="resize:vertical;"></textarea>
+          </div>
+          <div>
+            <label class="field-label">Costo Estimado (S/)</label>
+            <input id="s2_costo" type="number" placeholder="Ej: 320" class="field-input" style="max-width:180px;"/>
+          </div>
+
+          <div class="flex justify-between mt-5">
+            <button onclick="goStep(1)" class="btn-warn"><i class="bi bi-arrow-left"></i> Volver</button>
+            <button onclick="step2Action()" class="btn-success-custom"><i class="bi bi-bookmark-check-fill"></i> Guardar diagnóstico</button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    
+    <template id="tpl-3">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">3</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Autorización + Abono</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">El cliente firma y paga el 50% del costo estimado</p>
+          </div>
+        </div>
+
+        <div id="s3_telInfo" class="tel-info-card mb-5"></div>
+
+        <div class="cost-box mb-5">
+          <p style="font-size:.75rem;color:var(--purple);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Costo total de reparación</p>
+          <p id="s3_costoTotal" style="font-size:2rem;font-weight:800;color:var(--text);margin:0 0 14px;"></p>
+          <div style="background:white;border-radius:10px;padding:12px;border:1px solid #ddd6fe;">
+            <p style="font-size:.72rem;color:var(--purple);font-weight:700;margin:0 0 2px;text-transform:uppercase;">Abono requerido (50%)</p>
+            <p id="s3_abono" style="font-size:1.5rem;font-weight:800;color:var(--purple);margin:0;"></p>
+          </div>
+        </div>
+
+        <label class="auth-check-label mb-5">
+          <input type="checkbox" id="s3_check"/>
+          <div>
+            <p style="font-size:.875rem;font-weight:700;color:var(--text);margin:0 0 3px;">Autorización del cliente</p>
+            <p style="font-size:.78rem;color:var(--text2);margin:0;">El cliente acepta los términos, condiciones y el abono del 50%.</p>
+          </div>
+        </label>
+
+        <div class="flex justify-between">
+          <button onclick="goStep(2)" class="btn-warn"><i class="bi bi-arrow-left"></i> Volver</button>
+          <button onclick="step3Action()" class="btn-success-custom"><i class="bi bi-check2-circle"></i> Confirmar autorización</button>
+        </div>
+      </div>
+    </template>
+
+    
+    <template id="tpl-4">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">4</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Asignar Técnico</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">Solo técnicos con el skill de la marca del equipo</p>
+          </div>
+        </div>
+
+        <div id="s4_telInfo" class="tel-info-card mb-5"></div>
+        <div id="s4_tecnicos" class="flex flex-col gap-2 mb-5"></div>
+
+        <div class="flex justify-between">
+          <button onclick="goStep(3)" class="btn-warn"><i class="bi bi-arrow-left"></i> Volver</button>
+          <button onclick="step4Action()" class="btn-success-custom"><i class="bi bi-person-check-fill"></i> Confirmar técnico</button>
+        </div>
+      </div>
+    </template>
+
+    <template id="tpl-5">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">5</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Agregar Repuestos</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">Registra las piezas utilizadas en la reparación</p>
+          </div>
+        </div>
+
+        <div id="s5_telInfo" class="tel-info-card mb-5"></div>
+
+        <div class="card-panel mb-4">
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="field-label">Nombre del repuesto</label>
+              <input id="s5_nombre" type="text" placeholder="Ej: Pantalla AMOLED" class="field-input"/>
+            </div>
+            <div>
+              <label class="field-label">Precio (S/)</label>
+              <input id="s5_precio" type="number" placeholder="0.00" class="field-input"/>
+            </div>
+          </div>
+          <button onclick="step5AddRepuesto()" class="btn-orange">
+            <i class="bi bi-plus-circle-fill"></i> Agregar repuesto
+          </button>
+        </div>
+
+        <div id="s5_lista" class="flex flex-col gap-2 mb-3"></div>
+
+        <div id="s5_total" class="hidden card-panel mb-4" style="text-align:right;">
+          <span style="font-size:.78rem;color:var(--text3);">Total repuestos: </span>
+          <span id="s5_totalNum" style="font-size:1.2rem;font-weight:800;color:#ea580c;"></span>
+        </div>
+
+        <div class="flex justify-between">
+          <button onclick="goStep(4)" class="btn-warn"><i class="bi bi-arrow-left"></i> Volver</button>
+          <button onclick="goStep(6)" class="btn-info"><i class="bi bi-clipboard-check"></i> Ver estado final</button>
+        </div>
+      </div>
+    </template>
+
+    
+    <template id="tpl-6">
+      <div class="max-w-md mx-auto step-panel">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="step-header-badge">6</div>
+          <div>
+            <h2 style="font-size:1.15rem;font-weight:800;color:var(--text);margin:0;">Estado Final del Dispositivo</h2>
+            <p style="font-size:.78rem;color:var(--text3);margin:0;">Resumen completo de todas las estaciones</p>
+          </div>
+        </div>
+
+        <div id="s6_contenido"></div>
+
+        <div class="flex justify-between mt-5">
+          <button onclick="goStep(5)" class="btn-warn"><i class="bi bi-arrow-left"></i> Volver</button>
+          <button onclick="resetAll()" class="btn-primary-custom"><i class="bi bi-plus-square-dotted"></i> Nueva reparación</button>
+        </div>
+      </div>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
