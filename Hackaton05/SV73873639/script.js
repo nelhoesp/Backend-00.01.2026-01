@@ -181,6 +181,8 @@ function cargarModelos() {
     select.disabled = false;
 }
 
+
+
 document.getElementById('repair-form').onsubmit = function(e) {
     e.preventDefault();
 

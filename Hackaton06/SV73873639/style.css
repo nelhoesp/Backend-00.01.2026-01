@@ -317,3 +317,4 @@ input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--neon-pin
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
