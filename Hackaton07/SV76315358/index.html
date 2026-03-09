@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackaton07</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-black min-h-screen p-8 flex flex-wrap justify-center sm:justify-start items-start gap-6 ">
+
+
+    <div class="flex flex-row flex-wrap items-start justify-start gap-6">
+
+        <div
+            class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+            <h2 class="text-gray-200 text-center">Busca usuario en Github:</h2>
+            <div class="flex flex-col gap-3">
+                <input type="text" id="usuario_github" placeholder="Usuario..."
+                    class="bg-gray-800/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-blue-500 px-3 py-2 w-full outline-none" />
+                <button id="btn_github"
+                    class="bg-blue-500 px-6 py-2.5 text-white text-sm font-medium rounded-lg hover:bg-blue-400 cursor-pointer transition-all duration-300 shrink-0">
+                    Enviar
+                </button>
+            </div>
+            <div id="info-user"></div>
+        </div>
+
+        <div
+            class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+            <h1 class="text-gray-200 text-center">Pronóstico del Tiempo</h1>
+            <div class="flex flex-col gap-3">
+                <input type="text" id="ciudad_clima" placeholder="Ciudad..."
+                    class="bg-gray-800/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-orange-500 px-3 py-2 w-full outline-none" />
+                <button id="btn_clima"
+                    class="bg-orange-600 px-6 py-2.5 text-white text-sm font-medium rounded-lg hover:bg-orange-500 transition-all shrink-0">
+                    Consultar
+                </button>
+            </div>
+            <div id="info-clima"></div>
+        </div>
+
+        <div
+            class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+            <h1 class="text-gray-200 text-center ">Tipo de Cambio del dolar (perú)</h1>
+            <div class="flex flex-col gap-3">
+                <button id="btn_dolar"
+                    class="bg-green-600 px-6 py-2.5 text-white text-sm font-medium rounded-lg hover:bg-green-500 ransition-all shrink-0">
+                    Consultar SUNAT
+                </button>
+            </div>
+            <div id="info-dolar"></div>
+        </div>
+
+        <div
+            class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+            <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Pokédex Nacional</h1>
+            <div id="info-pokemon"
+                class="max-h-96 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-thin scrollbar-thumb-red-600">
+                <p class="text-gray-500 text-[10px] text-center italic">Presiona el botón para iniciar la lista</p>
+            </div>
+            <button id="btn_pokemon"
+                class="bg-red-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-red-500 transition-all cursor-pointer uppercase">
+                Cargar Pokémones
+            </button>
+        </div>
+
+    </div>
+
+    <div
+        class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+        <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Habilidades Pokémon</h1>
+        <div class="flex flex-col gap-3">
+            <input type="text" id="pokemon_name" placeholder="Nombre o ID..."
+                class="bg-gray-800/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-red-500 px-3 py-2 w-full outline-none" />
+            <button id="btn_poderes"
+                class="bg-slate-700 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-slate-600 transition-all cursor-pointer uppercase">
+                Ver Poderes
+            </button>
+        </div>
+        <div id="info-poderes"></div>
+    </div>
+
+    <div
+        class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+        <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Rick and Morty</h1>
+
+        <div class="flex flex-col gap-3">
+            <button id="btn_rick"
+                class="bg-lime-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-lime-500 transition-all cursor-pointer uppercase">
+                Cargar Personajes
+            </button>
+        </div>
+
+        <div id="info-rick" class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+            <p class="text-gray-500 text-[10px] text-center italic">Presiona para explorar el multiverso </p>
+        </div>
+    </div>
+
+    <div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Detalle de Personaje</h1>
+    
+    <div class="flex flex-col gap-3">
+        <input type="text" id="rick_name" placeholder="Nombre o ID..."
+            class="bg-gray-800/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-lime-500 px-3 py-2 w-full outline-none" />
+        
+        <button id="btn_rick_detail"
+            class="bg-lime-700 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-lime-600 transition-all cursor-pointer uppercase">
+            Ver Detalle
+        </button>
+    </div>
+
+    <div id="info-rick-detail"></div>
+</div>
+
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Top 10 Cócteles</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_cocktail"
+            class="bg-fuchsia-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-fuchsia-500 transition-all cursor-pointer uppercase">
+            Ver Favoritos
+        </button>
+    </div>
+
+    <div id="info-cocktail" class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+        <p class="text-gray-500 text-[10px] text-center italic">Descubre las mejores mezclas</p>
+    </div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Catálogo de Tienda</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_tienda"
+            class="bg-indigo-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-indigo-500 transition-all cursor-pointer uppercase">
+            Ver Productos
+        </button>
+    </div>
+
+    <div id="info-tienda" class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+        <p class="text-gray-500 text-[10px] text-center italic">Cargando existencias...</p>
+    </div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Galería Instantánea</h1>
+    
+    <div class="flex flex-col gap-3">
+        <p class="text-gray-400 text-[10px] text-center italic">Imágenes aleatorias de alta calidad</p>
+        
+        <button id="btn_picsum"
+            class="bg-violet-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-violet-500 transition-all cursor-pointer uppercase">
+            Generar Galería
+        </button>
+    </div>
+
+    <div id="info-picsum" class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+    </div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Citas Famosas</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_cita"
+            class="bg-emerald-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-emerald-500 transition-all cursor-pointer uppercase">
+            Inspirame
+        </button>
+    </div>
+
+    <div id="info-cita"></div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Generador de Perfiles</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_random_user"
+            class="bg-amber-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-amber-500 transition-all cursor-pointer uppercase">
+            Generar Usuario
+        </button>
+    </div>
+
+    <div id="info-random-user"></div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Estrenos de Cine</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_movies"
+            class="bg-rose-600 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-rose-500 transition-all cursor-pointer uppercase">
+            Ver Tendencias
+        </button>
+    </div>
+
+    <div id="info-movies" class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+        <p class="text-gray-500 text-[10px] text-center italic">Consultando la cartelera...</p>
+    </div>
+</div>
+
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Detalle de Película</h1>
+    
+    <div class="flex flex-col gap-3">
+        <input type="text" id="movie_query" placeholder="Título de la película..."
+            class="bg-gray-800/50 border border-gray-600 text-white text-sm rounded-lg focus:ring-2 focus:ring-rose-500 px-3 py-2 w-full outline-none" />
+        
+        <button id="btn_movie_detail"
+            class="bg-rose-700 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-rose-600 transition-all cursor-pointer uppercase">
+            Ver Info Completa
+        </button>
+    </div>
+
+    <div id="info-movie-detail"></div>
+</div>
+<div class="mt-8 bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl flex flex-col gap-4 w-64">
+    <h1 class="text-gray-200 text-center font-semibold text-sm uppercase tracking-wider">Imagen Astronómica</h1>
+    
+    <div class="flex flex-col gap-3">
+        <button id="btn_apod"
+            class="bg-indigo-700 px-6 py-2.5 text-white text-xs font-bold rounded-lg hover:bg-indigo-600 transition-all cursor-pointer uppercase">
+            Cargar Cosmos
+        </button>
+    </div>
+
+    <div id="info-apod" class="max-h-96 overflow-y-auto pr-1 flex flex-col gap-3 custom-scroll">
+        <p class="text-gray-500 text-[10px] text-center italic">Explorando el archivo de la NASA...</p>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
