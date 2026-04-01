@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fábrica de Armarios "Galaxy"</title>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* --- VARIABLES DE COLOR (Boothill por defecto) --- */
+        :root {
+            --bg-grad-1: #1a0b0b;
+            --bg-grad-2: #121212;
+            --primary: #d32f2f;
+            --accent: #fbc02d; 
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --text-main: #ffffff;
+            --text-muted: #b0bec5;
+        }
+
+        /* --- TEMA ASHVEIL (Error de Producción) --- */
+        body.theme-ashveil {
+            --bg-grad-1: #0a0a2a; 
+            --bg-grad-2: #121212;
+            --primary: #5e35b1; 
+            --accent: #e91e63;  
+        }
+
+        /* --- TEMA SUNDAY (Desperdicio de Recursos) --- */
+        body.theme-sunday {
+            --bg-grad-1: #001020; 
+            --bg-grad-2: #0a0a0a;
+            --primary: #4fc3f7; /* Azul claro elegante */
+            --accent: #e0e0e0;  /* Plateado */
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0; padding: 20px;
+            background-color: var(--bg-grad-2);
+            background-image: radial-gradient(circle at top right, var(--bg-grad-1) 0%, var(--bg-grad-2) 60%);
+            color: var(--text-main);
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            overflow: hidden; transition: background 0.5s ease;
+        }
+
+        .container { max-width: 950px; width: 100%; z-index: 10; position: relative; }
+        
+        h1 { 
+            text-align: center; color: var(--text-main); font-family: 'Teko', sans-serif; 
+            font-size: 3.5rem; letter-spacing: 3px; margin: 0 0 10px 0;
+            text-shadow: 0 0 15px var(--primary); transition: text-shadow 0.3s;
+        }
+
+        /* --- DASHBOARD --- */
+        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
+        .card { 
+            background: var(--card-bg); padding: 25px 15px; border-radius: 12px; 
+            text-align: center; border-bottom: 5px solid var(--primary); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .card h3 { margin: 0; font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; }
+        .card .valor { font-size: 3rem; font-family: 'Teko', sans-serif; font-weight: 600; margin: 5px 0 0; color: var(--accent); }
+        .card.destacado { border-color: var(--accent); background: rgba(50, 40, 20, 0.8); }
+        .card.destacado .valor { color: #fff; text-shadow: 0 0 10px var(--accent); }
+
+        /* --- BOTONES DE ABASTECIMIENTO --- */
+        .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        button { 
+            padding: 18px; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 1rem;
+            cursor: pointer; border: none; border-radius: 8px; transition: 0.3s; text-transform: uppercase;
+            position: relative; overflow: hidden;
+        }
+        .btn-comprar { 
+            background: #263238; color: var(--text-main); border-left: 4px solid var(--accent); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .btn-comprar:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
+
+        /* --- ZONA DE PRODUCCIÓN --- */
+        .produccion-panel {
+            background: rgba(0,0,0,0.4); border: 1px dashed var(--text-muted);
+            padding: 25px; border-radius: 15px; text-align: center;
+        }
+        
+        .status-calculadora {
+            font-size: 1.2rem; color: var(--accent); margin-bottom: 15px; font-family: 'Teko', sans-serif; letter-spacing: 1px;
+        }
+
+        .btn-producir { 
+            width: 100%; padding: 25px; font-size: 2rem; font-family: 'Teko', sans-serif;
+            background: var(--primary); color: #fff; border-radius: 10px; letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(211, 47, 47, 0.5); transition: all 0.3s ease;
+        }
+        .btn-producir:hover { transform: scale(1.02); background: #f44336; box-shadow: 0 0 30px var(--primary); }
+
+        /* --- PERSONAJES REACTIVOS --- */
+        .character-container {
+            position: fixed; bottom: -10px; right: 20px; display: flex; align-items: flex-end; z-index: 100;
+        }
+        .speech-bubble {
+            background: #fff; color: #000; padding: 20px; border-radius: 15px 15px 0 15px;
+            margin-bottom: 260px; margin-right: -60px; font-family: 'Share Tech Mono', monospace; font-weight: bold; 
+            font-size: 1rem; max-width: 280px; display: none; z-index: 101;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 5px solid var(--primary);
+        }
+        .char-img { 
+            width: 380px; transition: 0.3s; display: none; z-index: 100; 
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.7));
+        }
+
+        /* Clases de activación de personajes */
+        .show-boothill .speech-bubble { display: block; border-color: var(--primary); }
+        .show-boothill .img-boothill { display: block; animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        .show-ashveil .speech-bubble { display: block; border-color: var(--accent); background: #121212; color: #fff; }
+        .show-ashveil .img-ashveil { display: block; animation: panicShake 0.4s infinite alternate; }
+
+        .show-sunday .speech-bubble { display: block; border-color: #4fc3f7; background: #0d233a; color: #e0e0e0; }
+        .show-sunday .img-sunday { display: block; animation: floatUp 0.5s ease-out; filter: drop-shadow(0 0 20px rgba(79, 195, 247, 0.4));}
+
+        @keyframes slideUp { 0% { transform: translateY(100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes panicShake { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(-8px, 5px) rotate(-2deg); } }
+        @keyframes floatUp { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>[ FÁBRICA DE ARMARIOS ]</h1>
+
+        <div class="dashboard">
+            <div class="card"><h3>Tablones</h3><div class="valor" id="valTablones">0</div><small>Materia Prima</small></div>
+            <div class="card"><h3>Goma (kg)</h3><div class="valor" id="valGoma">0</div><small>Insumos</small></div>
+            <div class="card"><h3>Horas Hombre</h3><div class="valor" id="valHH">0</div><small>Personal</small></div>
+            <div class="card destacado"><h3>ARMARIOS</h3><div class="valor" id="valArmarios">0</div><small>Producidos</small></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-comprar" onclick="abastecer('materia_prima')">📦 Lote Tablones (+3)</button>
+            <button class="btn-comprar" onclick="abastecer('insumo')">🧪 Lote Goma (+1kg)</button>
+            <button class="btn-comprar" onclick="abastecer('personal')">👷 Turno Personal (+40 HH)</button>
+        </div>
+
+        <div class="produccion-panel">
+            <div class="status-calculadora" id="calcStatus">Analizando recursos...</div>
+            <button class="btn-producir" id="btnProducir" onclick="producir()">🛠️ INICIAR PRODUCCIÓN</button>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-top: 15px;">
+                Costo Unitario: 1 Tablón | 0.25kg Goma | 8 Horas Hombre
+            </p>
+        </div>
+    </div>
+
+    <div class="character-container" id="charContainer">
+        <div class="speech-bubble" id="burbujaTexto">¡Hola!</div>
+        <img src="Images/Boothil.jpg" class="char-img img-boothill" id="imgBoothill" alt="Boothill">
+        <img src="Images/Ashveil.jpg" class="char-img img-ashveil" id="imgAshveil" alt="Ashveil">
+        <img src="Images/Sunday.jpg" class="char-img img-sunday" id="imgSunday" alt="Sunday">
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/inventario';
+
+        const sndExito = new Audio('https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3'); 
+        const sndError = new Audio('https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3'); 
+        sndExito.volume = 0.5; sndError.volume = 0.4;
+
+        let timerPersonaje;
+
+        async function cargarInventario() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                
+                document.getElementById('valTablones').innerText = data.tablones;
+                document.getElementById('valGoma').innerText = data.goma_kg;
+                document.getElementById('valHH').innerText = data.horas_hombre;
+                document.getElementById('valArmarios').innerText = data.armarios_producidos;
+
+                const maxTablones = Math.floor(data.tablones / 1);
+                const maxGoma = Math.floor(data.goma_kg / 0.25);
+                const maxHH = Math.floor(data.horas_hombre / 8);
+                const posibles = Math.min(maxTablones, maxGoma, maxHH);
+
+                const calcStatus = document.getElementById('calcStatus');
+
+                if (posibles > 0) {
+                    calcStatus.innerHTML = `🌟 Recursos óptimos. Posibles a fabricar: <strong>${posibles} armarios</strong>.`;
+                    calcStatus.style.color = 'var(--accent)';
+                } else {
+                    calcStatus.innerHTML = `⚠️ Recursos insuficientes. Faltan materiales.`;
+                    calcStatus.style.color = '#ff5252';
+                }
+            } catch (err) { console.error('Error al cargar inventario', err); }
+        }
+
+        function mostrarPersonaje(tipo, mensaje) {
+            const container = document.getElementById('charContainer');
+            const body = document.body;
+            document.getElementById('burbujaTexto').innerText = mensaje;
+            
+            clearTimeout(timerPersonaje);
+            container.classList.remove('show-boothill', 'show-ashveil', 'show-sunday');
+            body.classList.remove('theme-ashveil', 'theme-sunday');
+            void container.offsetWidth; 
+            
+            if (tipo === 'exito') {
+                sndExito.currentTime = 0; sndExito.play();
+                container.classList.add('show-boothill');
+            }
+            if (tipo === 'error') {
+                sndError.currentTime = 0; sndError.play();
+                container.classList.add('show-ashveil');
+                body.classList.add('theme-ashveil'); 
+            }
+            if (tipo === 'sunday') {
+                // Sunday usa el mismo sonido de error para dar la alerta
+                sndError.currentTime = 0; sndError.play();
+                container.classList.add('show-sunday');
+                body.classList.add('theme-sunday'); 
+            }
+
+            timerPersonaje = setTimeout(() => { 
+                container.classList.remove('show-boothill', 'show-ashveil', 'show-sunday');
+                body.classList.remove('theme-ashveil', 'theme-sunday'); 
+            }, 5500); // 5.5 segundos para poder leer bien los regaños
+        }
+
+        async function abastecer(tipo) {
+            // Lógica de Inteligencia de Inventario (Saber qué estamos comprando)
+            const tab = parseInt(document.getElementById('valTablones').innerText);
+            const goma = parseFloat(document.getElementById('valGoma').innerText);
+            const hh = parseInt(document.getElementById('valHH').innerText);
+
+            let esDesperdicio = false;
+            let nombreRecurso = "";
+
+            // Verifica si estamos comprando algo que ya cumple el requisito mínimo (1, 0.25 o 8)
+            if (tipo === 'materia_prima' && tab >= 1) { esDesperdicio = true; nombreRecurso = "Tablones"; }
+            if (tipo === 'insumo' && goma >= 0.25) { esDesperdicio = true; nombreRecurso = "Goma"; }
+            if (tipo === 'personal' && hh >= 8) { esDesperdicio = true; nombreRecurso = "Horas Hombre"; }
+
+            try {
+                // Hace la compra en la base de datos de todos modos
+                await fetch(`${API_URL}/abastecer`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tipo })
+                });
+                cargarInventario();
+                
+                // Decide a quién mostrar basado en la inteligencia de inventario
+                if (esDesperdicio) {
+                    const mensajesSunday = [
+                        `¿Para qué adquieres más ${nombreRecurso}? Ya tenemos suficiente. Concéntrate en lo que realmente falta.`,
+                        `Una gestión ineficiente... Gastas en ${nombreRecurso} cuando la producción exige otros materiales.`,
+                        `Interesante decisión. Desperdiciando presupuesto en ${nombreRecurso} que no necesitamos urgentemente.`
+                    ];
+                    mostrarPersonaje('sunday', mensajesSunday[Math.floor(Math.random() * mensajesSunday.length)]);
+                } else {
+                    const mensajesAbastecer = [
+                        '¡Suministros recibidos, socio! Sigamos sumando.',
+                        '¡Cargamento asegurado! Listos para seguir operando.',
+                        '¡Eso es! El inventario está engordando.'
+                    ];
+                    mostrarPersonaje('exito', mensajesAbastecer[Math.floor(Math.random() * mensajesAbastecer.length)]);
+                }
+            } catch (err) { console.error('Error al abastecer', err); }
+        }
+
+        async function producir() {
+            const tab = parseInt(document.getElementById('valTablones').innerText);
+            const goma = parseFloat(document.getElementById('valGoma').innerText);
+            const hh = parseInt(document.getElementById('valHH').innerText);
+
+            let requisitosListos = 0;
+            let faltantes = [];
+
+            if (tab >= 1) requisitosListos++; else faltantes.push('Tablones');
+            if (goma >= 0.25) requisitosListos++; else faltantes.push('Goma');
+            if (hh >= 8) requisitosListos++; else faltantes.push('Horas Hombre');
+
+            try {
+                const res = await fetch(`${API_URL}/producir`, { method: 'POST' });
+                
+                if (res.ok) {
+                    cargarInventario();
+                    const mensajesExito = [
+                        '¡Yeehaw! ¡Un armario ensamblado a la perfección!',
+                        '¡Así se hace! Ese armario quedó brillante, socio.',
+                        '¡Somos imparables! Directo al área de empaque.'
+                    ];
+                    mostrarPersonaje('exito', mensajesExito[Math.floor(Math.random() * mensajesExito.length)]);
+                    
+                } else {
+                    let mensajeError = "";
+                    if (requisitosListos === 2) {
+                        mensajeError = `¡Ashh! Casi lo logramos. Solo nos falta: ${faltantes[0]}. ¡Consíguelo rápido!`;
+                    } else if (requisitosListos === 1) {
+                        mensajeError = `¡Esto es un desastre! Aún nos faltan: ${faltantes.join(" y ")}. ¡Ponte a trabajar!`;
+                    } else {
+                        mensajeError = `¡No tenemos absolutamente NADA! ¿Pretendes hacer armarios con polvo estelar? ¡Abastece ya!`;
+                    }
+                    mostrarPersonaje('error', mensajeError);
+                }
+            } catch (err) { console.error('Error al producir', err); }
+        }
+
+        cargarInventario();
+    </script>
+</body>
+</html>

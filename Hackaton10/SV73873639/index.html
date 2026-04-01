@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Lista de Tamon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0; padding: 25px; box-sizing: border-box;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            color: #4a4a4a; display: flex; justify-content: center;
+            height: 100vh; overflow: hidden; 
+        }
+
+        .container { width: 100%; max-width: 1600px; display: flex; flex-direction: column; height: 100%; }
+        h1 { text-align: center; color: #ffffff; margin: 0 0 15px 0; font-weight: 800; font-size: 2.2rem; text-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #6a82fb; border-bottom: 2px dashed #d1d8e0; padding-bottom: 10px; margin-top: 0; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+        .contador { background: #ffb8b8; color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.9rem; }
+
+        .dashboard { display: grid; grid-template-columns: 320px 1fr 1fr; gap: 20px; flex-grow: 1; min-height: 0; }
+
+        .panel { background: #ffffff; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; box-sizing: border-box; }
+        .panel-left { height: 100%; overflow-y: auto; gap: 12px; }
+        .panel-left::-webkit-scrollbar { width: 5px; }
+        .panel-left::-webkit-scrollbar-thumb { background: #d1d8e0; border-radius: 10px; }
+
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 5px; background: #f4f7f6; border: 2px solid transparent; border-radius: 12px; color: #4a4a4a; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: 0.3s; }
+        input:focus, textarea:focus { background: #ffffff; border: 2px solid #fcb69f; outline: none; }
+        
+        button.btn-add { width: 100%; padding: 12px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #5d4037; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        button.btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255, 154, 158, 0.4); }
+
+        .widget-box { padding: 15px; background: #f8f9fa; border-radius: 16px; border: 2px dashed #d1d8e0; text-align: center; }
+        .widget-box h3 { margin: 0 0 8px 0; color: #6a82fb; font-size: 0.95rem; text-transform: uppercase; }
+        .widget-text { font-size: 0.9rem; color: #777; font-weight: 600; margin: 0; }
+        
+        .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; height: 10px; margin-bottom: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #a8e6cf, #3dccc7); width: 0%; transition: width 0.5s ease-in-out; }
+
+        .list-section { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; overflow-y: auto; flex-grow: 1; padding-right: 5px; }
+        .list-section::-webkit-scrollbar { width: 6px; }
+        .list-section::-webkit-scrollbar-thumb { background: #ffb8b8; border-radius: 10px; }
+
+        .item-card { background: #fdfbfb; padding: 15px; border-radius: 16px; border: 1px solid #f0f0f0; transition: all 0.2s; position: relative; }
+        .item-card:hover { transform: translateX(5px); border-color: #ffb8b8; }
+        .item-card h3 { margin: 0 0 5px 0; color: #333; font-size: 1.1rem; }
+        
+        /* Estilos de Etiquetas Inteligentes */
+        .tag { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-bottom: 5px; font-weight: 800; text-transform: uppercase; }
+        .tag-comida { background: #fff2cc; color: #d68100; }
+        .tag-limpieza { background: #e1f5fe; color: #0288d1; }
+        .tag-estudio { background: #f3e5f5; color: #7b1fa2; }
+        .tag-gaming { background: #e8f5e9; color: #2e7d32; }
+        .tag-otro { background: #f5f5f5; color: #616161; }
+
+        .item-card p { margin: 0 0 10px 0; color: #777; font-size: 0.9rem; line-height: 1.3; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; }
+        .item-date { color: #a4b0be; font-size: 0.8rem; font-weight: 600; }
+
+        button.btn-complete { padding: 6px 14px; background-color: #e0f7fa; color: #00acc1; border: none; border-radius: 20px; cursor: pointer; font-weight: 800; font-size: 0.8rem; }
+        button.btn-complete:hover { background-color: #00acc1; color: white; }
+
+        .completed .item-card { background: #f8f9fa; opacity: 0.7; }
+        .completed .item-card h3, .completed .item-card p { text-decoration: line-through; color: #a4b0be; }
+        .status-badge { display: inline-block; padding: 5px 10px; background-color: #e8f5e9; color: #2e7d32; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+
+        /* PERSONAJE */
+        .welcomer-container { position: fixed; bottom: -5px; right: 20px; display: flex; align-items: flex-end; z-index: 100; }
+        .speech-bubble { background: #ffffff; color: #5d4037; padding: 15px 20px; border-radius: 25px 25px 0 25px; margin-bottom: 200px; margin-right: -40px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-weight: 800; font-size: 1rem; max-width: 220px; position: relative; animation: popIn 0.5s ease-out; border: 3px solid; z-index: 101; transition: 0.3s; }
+        .speech-bubble:after { content: ''; position: absolute; right: 20px; bottom: -15px; width: 0; height: 0; border: 15px solid transparent; border-bottom: 0; border-right: 0; }
+        .welcomer-img { width: 280px; height: auto; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.15)); z-index: 100; transition: 0.3s; }
+
+        .state-calm .speech-bubble { border-color: #fecfef; }
+        .state-calm .speech-bubble:after { border-top-color: #fecfef; }
+        .state-calm .welcomer-img { animation: float 4s ease-in-out infinite; }
+
+        .state-urgent .speech-bubble { border-color: #a4b0be; }
+        .state-urgent .speech-bubble:after { border-top-color: #a4b0be; }
+        .state-urgent .welcomer-img { animation: shake 2.5s infinite; }
+
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Mis Compras con Tamon ✨</h1>
+
+        <div class="dashboard">
+            <div class="panel panel-left">
+                <h2>Añadir a la lista</h2>
+                <input type="text" id="nombre" placeholder="¿Qué necesitamos comprar?" required>
+                <textarea id="descripcion" placeholder="Detalles extra..." rows="2"></textarea>
+                <button class="btn-add" onclick="crearItem()">+ Agregar a la mochila</button>
+
+                <div class="widget-box">
+                    <h3>Progreso</h3>
+                    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+                    <p class="widget-text" id="progressText">0% completado</p>
+                </div>
+
+                <div class="widget-box">
+                    <h3>📅 Hoy es</h3>
+                    <p class="widget-text" id="clockText">Cargando...</p>
+                </div>
+
+                <div class="widget-box" style="border-color: #ffb8b8; background: #fff5f5;">
+                    <h3 style="color: #ff7675;">💡 Tip de Tamon</h3>
+                    <p class="widget-text" id="tipText">Cargando...</p>
+                </div>
+            </div>
+
+            <div class="panel panel-lists">
+                <h2>Por Comprar <span class="contador" id="countPendientes">0</span></h2>
+                <div class="list-section" id="listaPendientes"></div>
+            </div>
+
+            <div class="panel panel-lists completed">
+                <h2>¡Ya lo tenemos! <span class="contador" style="background:#a8e6cf;" id="countCompletados">0</span></h2>
+                <div class="list-section" id="listaCompletados"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="welcomer-container state-calm" id="characterContainer">
+        <div class="speech-bubble" id="characterBubble">
+            ¡Hola! 🌟 Todo bajo control. ¡Añade lo que necesites!
+        </div>
+        <img src="Images/Tamon.png" class="welcomer-img" id="characterImg" alt="Personaje">
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api/compras';
+        
+        // --- SONIDOS (Web Audio API) ---
+        const sndPop = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+        const sndDing = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        sndPop.volume = 0.5; sndDing.volume = 0.5;
+
+        // --- LÓGICA DE ETIQUETAS ---
+        function obtenerTag(texto) {
+            const t = texto.toLowerCase();
+            if (t.match(/manzana|pollo|leche|pan|huevo|arroz|cafe|agua|comida/)) return '<span class="tag tag-comida">🍎 Comida</span>';
+            if (t.match(/jabon|detergente|limpiar|escoba|desinfectante|baño/)) return '<span class="tag tag-limpieza">🧼 Limpieza</span>';
+            if (t.match(/cuaderno|lapiz|libro|estudiar|tarea|borrador/)) return '<span class="tag tag-estudio">📚 Estudios</span>';
+            if (t.match(/steam|juego|pavvos|rp|skin|mando|consola/)) return '<span class="tag tag-gaming">🎮 Gaming</span>';
+            return '<span class="tag tag-otro">📦 Otro</span>';
+        }
+
+        // --- RELOJ Y TIPS ---
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clockText').innerHTML = `<strong>${now.toLocaleTimeString('es-ES')}</strong><br>${now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+        }, 1000);
+
+        const tips = ["Lleva bolsas reutilizables. 🌍", "No vayas con hambre. 🍕", "Compara precios por kilo. ⚖️", "Revisa tu refri primero. 🧊"];
+        document.getElementById('tipText').innerText = tips[Math.floor(Math.random() * tips.length)];
+
+        // --- CARGAR LISTAS ---
+        async function cargarListas() {
+            try {
+                const resP = await fetch(`${API_URL}/pendientes`);
+                const pendientes = await resP.json();
+                const resC = await fetch(`${API_URL}/completados`);
+                const completados = await resC.json();
+
+                const hoy = new Date();
+                const hoyCorto = hoy.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).toLowerCase();
+                let hayUrgencia = false;
+
+                // Render Pendientes
+                const containerP = document.getElementById('listaPendientes');
+                containerP.innerHTML = pendientes.length === 0 ? '<p style="color:#a4b0be; text-align:center; margin-top:40px;">¡Libre! 🎉</p>' : '';
+                pendientes.forEach(item => {
+                    const texto = (item.nombre + " " + item.descripcion).toLowerCase();
+                    if (texto.includes(hoyCorto) || texto.includes('hoy') || texto.includes('urgente')) hayUrgencia = true;
+                    
+                    containerP.innerHTML += `
+                        <div class="item-card">
+                            ${obtenerTag(item.nombre)}
+                            <h3>${item.nombre}</h3>
+                            <p>${item.descripcion || ''}</p>
+                            <div class="card-meta">
+                                <span class="item-date">📅 ${new Date(item.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}</span>
+                                <button class="btn-complete" onclick="completarItem('${item._id}')">✓ Tengo</button>
+                            </div>
+                        </div>`;
+                });
+
+                // Render Completados
+                const containerC = document.getElementById('listaCompletados');
+                containerC.innerHTML = completados.length === 0 ? '<p style="color:#a4b0be; text-align:center; margin-top:40px;">Vacío.</p>' : '';
+                completados.forEach(item => {
+                    containerC.innerHTML += `
+                        <div class="item-card">
+                            ${obtenerTag(item.nombre)}
+                            <h3>${item.nombre}</h3>
+                            <p>${item.descripcion || ''}</p>
+                            <div class="card-meta">
+                                <span class="status-badge">🛍️ ¡Listo!</span>
+                            </div>
+                        </div>`;
+                });
+
+                // --- PERSONAJE ---
+                const charCont = document.getElementById('characterContainer');
+                const charImg = document.getElementById('characterImg');
+                const charBub = document.getElementById('characterBubble');
+
+                if (hayUrgencia) {
+                    charCont.className = 'welcomer-container state-urgent';
+                    charImg.src = "Images/Depremon.png";
+                    charBub.innerText = "¡Ay no! 😰 ¡Tenemos cosas que comprar, o verificar para HOY! ¡Rápido!";
+                } else {
+                    charCont.className = 'welcomer-container state-calm';
+                    charImg.src = "Images/Tamon.png";
+                    charBub.innerText = "¡Hola! 🌟 Todo bajo control.";
+                }
+
+                // --- PROGRESO Y CONFETI ---
+                const total = pendientes.length + completados.length;
+                const perc = total > 0 ? Math.round((completados.length / total) * 100) : 0;
+                document.getElementById('progressBar').style.width = perc + '%';
+                document.getElementById('progressText').innerText = `${perc}% (${completados.length}/${total})`;
+
+                // Disparar confeti si llegamos al 100% y hay items
+                if (perc === 100 && total > 0) {
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff9a9e', '#fecfef', '#a8e6cf'] });
+                }
+
+                document.getElementById('countPendientes').innerText = pendientes.length;
+                document.getElementById('countCompletados').innerText = completados.length;
+
+            } catch (err) { console.error(err); }
+        }
+
+        async function crearItem() {
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            if (!nombre) return alert('¡Escribe el nombre!');
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, descripcion })
+                });
+                if (res.ok) {
+                    sndPop.play(); // Sonido al agregar
+                    document.getElementById('nombre').value = '';
+                    document.getElementById('descripcion').value = '';
+                    cargarListas();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function completarItem(id) {
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: 'PUT' });
+                if (res.ok) {
+                    sndDing.play(); // Sonido al completar
+                    cargarListas();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        cargarListas();
+    </script>
+</body>
+</html>
