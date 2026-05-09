@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PackGo — Clientes</title>
+<script src="https://cdn.socket.io/4.6.2/socket.io.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #f0c040;
+    --accent2: #40c0f0;
+    --danger: #f04060;
+    --success: #40f090;
+    --text: #e8e8f0;
+    --muted: #666680;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .status-bar {
+    display: flex; gap: 16px; align-items: center; font-size: 0.75rem;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  #user-info { color: var(--accent); font-weight: 700; }
+
+  /* ── Layout ── */
+  .app { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 61px); }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 24px;
+    background: none; border: none; color: var(--muted);
+    font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer;
+    text-align: left; transition: all 0.2s; width: 100%;
+    border-left: 3px solid transparent;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--surface2); }
+  .nav-btn.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); }
+  .nav-icon { font-size: 1.1rem; }
+  .nav-divider { height: 1px; background: var(--border); margin: 12px 24px; }
+  .sidebar-footer { margin-top: auto; padding: 16px 24px; }
+
+  /* ── Main ── */
+  main { padding: 32px; overflow-y: auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .panel-title {
+    font-family: var(--font-head); font-size: 1.6rem; font-weight: 800;
+    margin-bottom: 24px; letter-spacing: -0.5px;
+    border-left: 4px solid var(--accent); padding-left: 16px;
+  }
+  /* Texto general más legible */
+  p, li, td, .paquete-desc, .paquete-dest { font-family: var(--font-body); }
+  label { font-family: var(--font-mono); }
+
+  /* ── Auth Screen ── */
+  #auth-screen {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px; width: 400px;
+    position: relative;
+  }
+  .auth-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .auth-title {
+    font-family: var(--font-head); font-size: 1.8rem; font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .auth-sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 28px; }
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+  input, select, textarea {
+    width: 100%; padding: 11px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 0.85rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; }
+  select option { background: var(--surface2); }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 10px 20px; border: none; cursor: pointer;
+    font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.5px; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #ffd060; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-success { background: var(--success); color: #000; }
+  .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+  .btn-full { width: 100%; }
+  .auth-toggle { text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--muted); }
+  .auth-toggle a { color: var(--accent); cursor: pointer; }
+
+  /* ── Cards ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 20px; position: relative; overflow: hidden;
+  }
+  .card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--border);
+  }
+  .card.accent::after { background: var(--accent); }
+  .card.info::after { background: var(--accent2); }
+  .card.success::after { background: var(--success); }
+  .card-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .card-value { font-family: var(--font-head); font-size: 2rem; font-weight: 800; margin: 4px 0; }
+  .card-sub { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── Paquetes list ── */
+  .paquete-item {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 16px 20px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 16px;
+    transition: border-color 0.2s; cursor: pointer;
+  }
+  .paquete-item:hover { border-color: var(--accent); }
+  .tracking-code {
+    font-family: var(--font-mono); font-weight: 700;
+    color: var(--accent); font-size: 0.85rem; min-width: 100px;
+  }
+  .paquete-info { flex: 1; }
+  .paquete-desc { font-size: 0.85rem; }
+  .paquete-dest { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .badge {
+    padding: 3px 10px; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .badge-registrado { background: var(--surface2); color: var(--muted); }
+  .badge-en_transito { background: #1a3a50; color: var(--accent2); }
+  .badge-en_destino { background: #2a2a10; color: var(--accent); }
+  .badge-entregado { background: #0a3020; color: var(--success); }
+  .badge-no_entregado { background: #3a1020; color: var(--danger); }
+
+  /* ── Form Panel ── */
+  .form-card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 28px; max-width: 600px;
+  }
+
+  /* ── Tracking Search ── */
+  .tracking-search { display: flex; gap: 12px; margin-bottom: 28px; }
+  .tracking-search input { flex: 1; }
+  .tracking-result {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 28px; display: none;
+  }
+  .tracking-result.visible { display: block; }
+  .tracking-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  .tracking-info-label {
+    font-size: 0.65rem; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1px; font-family: var(--font-mono); margin-bottom: 4px;
+  }
+  .tracking-info-value { font-size: 0.9rem; color: var(--text); font-family: var(--font-body); font-weight: 500; }
+  .tracking-info-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 24px; }
+  .timeline-dot {
+    position: absolute; left: -28px; top: 5px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--border); border: 2px solid var(--bg);
+  }
+  .timeline-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .timeline-event {
+    font-size: 0.78rem; font-weight: 600; color: var(--accent);
+    font-family: var(--font-mono); letter-spacing: 0.5px;
+    background: var(--surface2); display: inline-block;
+    padding: 2px 8px; margin-bottom: 4px;
+  }
+  .timeline-desc { font-size: 0.82rem; color: var(--text); margin-top: 4px; font-family: var(--font-body); }
+  .timeline-time { font-size: 0.72rem; color: var(--muted); margin-top: 3px; font-family: var(--font-mono); }
+
+  /* ── Chat ── */
+  .chat-container {
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-direction: column; height: 400px;
+  }
+  .chat-header {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .chat-msg { max-width: 80%; }
+  .chat-msg.mine { align-self: flex-end; }
+  .msg-bubble {
+    padding: 8px 12px; font-size: 0.8rem;
+    background: var(--surface2); border: 1px solid var(--border);
+  }
+  .chat-msg.mine .msg-bubble { background: #1a1a0a; border-color: var(--accent); }
+  .msg-meta { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+  .chat-msg.mine .msg-meta { text-align: right; }
+  .chat-input { display: flex; border-top: 1px solid var(--border); }
+  .chat-input input {
+    flex: 1; background: transparent; border: none; border-radius: 0;
+    padding: 12px 16px; font-size: 0.82rem;
+  }
+  .chat-input button {
+    padding: 12px 20px; background: var(--accent);
+    border: none; color: #000; cursor: pointer;
+    font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem;
+  }
+
+  /* ── Toast ── */
+  #toast-container {
+    position: fixed; bottom: 24px; right: 24px;
+    display: flex; flex-direction: column; gap: 10px; z-index: 999;
+  }
+  .toast {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent); padding: 12px 16px;
+    font-size: 0.8rem; min-width: 280px;
+    animation: slideIn 0.3s ease;
+  }
+  .toast.danger { border-left-color: var(--danger); }
+  .toast.success { border-left-color: var(--success); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ── Utils ── */
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .flex-gap { display: flex; gap: 12px; }
+  .text-muted { color: var(--muted); font-size: 0.8rem; }
+  .mt-16 { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ──────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-title">Pack<span style="color:var(--accent)">Go</span></div>
+    <div class="auth-sub">Tu paquete, en movimiento</div>
+
+    <!-- Login -->
+    <div id="login-form">
+      <form onsubmit="return false">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="login()">INGRESAR →</button>
+      </form>
+      <div class="auth-toggle">¿No tienes cuenta? <a onclick="toggleAuth()">Regístrate</a></div>
+    </div>
+
+    <!-- Register -->
+    <div id="register-form" style="display:none">
+      <form onsubmit="return false">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" id="reg-nombre" placeholder="Juan Pérez" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="reg-pass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') register()">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="register()">CREAR CUENTA →</button>
+      </form>
+      <div class="auth-toggle">¿Ya tienes cuenta? <a onclick="toggleAuth()">Inicia sesión</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HEADER ───────────────────────────────────── -->
+<header>
+  <div class="logo">Pack<span>Go</span></div>
+  <div class="status-bar">
+    <div class="dot" id="ws-dot"></div>
+    <span id="ws-status">Desconectado</span>
+    <span>|</span>
+    <span id="user-info">—</span>
+    <button class="btn btn-secondary btn-sm" onclick="logout()">Salir</button>
+  </div>
+</header>
+
+<!-- ── APP ──────────────────────────────────────── -->
+<div class="app">
+  <nav class="sidebar">
+    <button class="nav-btn active" onclick="showPanel('dashboard', this)">
+      <span class="nav-icon">◈</span> Dashboard
+    </button>
+    <button class="nav-btn" onclick="showPanel('paquetes', this)">
+      <span class="nav-icon">◻</span> Mis Paquetes
+    </button>
+    <button class="nav-btn" onclick="showPanel('nuevo', this)">
+      <span class="nav-icon">＋</span> Nuevo Envío
+    </button>
+    <button class="nav-btn" onclick="showPanel('tracking', this)">
+      <span class="nav-icon">◎</span> Rastrear
+    </button>
+    <div class="nav-divider"></div>
+    <button class="nav-btn" id="nav-estado" onclick="showPanel('estado', this)" style="display:none">
+      <span class="nav-icon">▲</span> Actualizar Estado
+    </button>
+    <button class="nav-btn" onclick="showPanel('chat', this)">
+      <span class="nav-icon">◇</span> Chat Soporte
+    </button>
+    <div class="sidebar-footer">
+      <div class="text-muted" id="online-count">— online</div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Dashboard -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="panel-title">Dashboard</div>
+      <div class="grid-3 mb-24">
+        <div class="card accent">
+          <div class="card-label">Total Envíos</div>
+          <div class="card-value" id="stat-total">—</div>
+          <div class="card-sub">paquetes registrados</div>
+        </div>
+        <div class="card info">
+          <div class="card-label">En Tránsito</div>
+          <div class="card-value" id="stat-transito">—</div>
+          <div class="card-sub">en camino</div>
+        </div>
+        <div class="card success">
+          <div class="card-label">Entregados</div>
+          <div class="card-value" id="stat-entregados">—</div>
+          <div class="card-sub">este mes</div>
+        </div>
+      </div>
+      <div class="panel-title" style="font-size:1rem;margin-bottom:12px">Actividad en Tiempo Real</div>
+      <div id="activity-feed" style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Paquetes -->
+    <div class="panel" id="panel-paquetes">
+      <div class="panel-title">Mis Paquetes</div>
+      <button class="btn btn-secondary btn-sm mb-16" onclick="loadPaquetes()">↻ Actualizar</button>
+      <div id="paquetes-list"><div class="text-muted">Cargando...</div></div>
+    </div>
+
+    <!-- Nuevo Envío -->
+    <div class="panel" id="panel-nuevo">
+      <div class="panel-title">Nuevo Envío</div>
+      <div class="form-card">
+        <div class="form-group">
+          <label>Descripción del paquete</label>
+          <textarea id="new-desc" placeholder="Contenido del paquete..."></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input type="number" id="new-peso" placeholder="1.5" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Teléfono destinatario</label>
+            <input type="text" id="new-tel" placeholder="+51 999 999 999">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Nombre del destinatario</label>
+          <input type="text" id="new-dest-nombre" placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label>Dirección de entrega</label>
+          <textarea id="new-dest-dir" placeholder="Av. ejemplo 123, Lima" style="min-height:60px"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="crearPaquete()">REGISTRAR ENVÍO →</button>
+      </div>
+    </div>
+
+    <!-- Tracking -->
+    <div class="panel" id="panel-tracking">
+      <div class="panel-title">Rastrear Paquete</div>
+      <div class="tracking-search">
+        <input type="text" id="track-codigo" placeholder="Ej: CUR123456" style="text-transform:uppercase">
+        <button class="btn btn-primary" onclick="buscarTracking()">RASTREAR</button>
+      </div>
+      <div class="tracking-result" id="tracking-result"></div>
+    </div>
+
+    <!-- Actualizar Estado (staff) -->
+    <div class="panel" id="panel-estado">
+      <div class="panel-title">Actualizar Estado</div>
+      <div class="form-card">
+        <div class="form-group">
+          <label>Código de tracking</label>
+          <input type="text" id="est-codigo" placeholder="CUR123456">
+        </div>
+        <div class="form-group">
+          <label>Nuevo estado</label>
+          <select id="est-estado">
+            <option value="en_transito">En Tránsito</option>
+            <option value="en_destino">En Destino</option>
+            <option value="entregado">Entregado</option>
+            <option value="no_entregado">No Entregado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Descripción de ubicación</label>
+          <input type="text" id="est-ubicacion" placeholder="Almacén Lima Norte...">
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Latitud (opcional)</label>
+            <input type="number" id="est-lat" placeholder="-12.0464" step="0.000001">
+          </div>
+          <div class="form-group">
+            <label>Longitud (opcional)</label>
+            <input type="number" id="est-lng" placeholder="-77.0428" step="0.000001">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="actualizarEstado()">ACTUALIZAR ESTADO →</button>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="panel" id="panel-chat">
+      <div class="panel-title">Chat de Soporte</div>
+      <div style="display:grid;grid-template-columns:220px 1fr;gap:0;border:1px solid var(--border);height:420px">
+        <!-- Lista de paquetes -->
+        <div style="border-right:1px solid var(--border);overflow-y:auto;background:var(--surface)">
+          <div style="padding:10px 14px;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)">Mis envíos</div>
+          <div id="chat-pkg-list"><div class="text-muted" style="padding:12px;font-size:0.78rem">Cargando...</div></div>
+        </div>
+        <!-- Chat activo -->
+        <div class="chat-container" style="border:none;height:420px">
+          <div class="chat-header" id="chat-header">← Selecciona un envío</div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter') enviarMensaje()">
+            <button onclick="enviarMensaje()">ENVIAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast-container"></div>
+
+<script>
+// ════════════════════════════════════════
+//  ESTADO GLOBAL
+// ════════════════════════════════════════
+let token = localStorage.getItem('client_token');
+let currentUser = JSON.parse(localStorage.getItem('client_user') || 'null');
+let socket = null;
+let activeChatPaquete = null;
+const API = 'http://localhost:3000/api';
+
+// ════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════
+window.onload = () => {
+  // Limpiar cualquier token de admin que haya quedado
+  if (token && currentUser) {
+    if (currentUser.rol === 'admin') {
+      localStorage.removeItem('client_token');
+      localStorage.removeItem('client_user');
+      token = null;
+      currentUser = null;
+      return;
+    }
+    initApp();
+  }
+};
+
+function initApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('user-info').textContent = `${currentUser.nombre} [${currentUser.rol}]`;
+  
+  // Solo repartidor ve "Actualizar Estado" en este portal
+  if (currentUser.rol === 'repartidor') {
+    document.getElementById('nav-estado').style.display = 'flex';
+  } else {
+    document.getElementById('nav-estado').style.display = 'none';
+  }
+
+  connectSocket();
+  loadDashboard();
+}
+
+// ════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════
+function toggleAuth() {
+  document.getElementById('login-form').style.display =
+    document.getElementById('login-form').style.display === 'none' ? 'block' : 'none';
+  document.getElementById('register-form').style.display =
+    document.getElementById('register-form').style.display === 'none' ? 'block' : 'none';
+}
+
+async function login() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-pass').value;
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!data.ok) return toast(data.error, 'danger');
+
+    // Admin no puede entrar al portal cliente
+    if (data.usuario.rol === 'admin') {
+      toast('Eres administrador. Redirigiendo a tu panel...', 'danger');
+      setTimeout(() => window.location.href = '/admin.html', 1500);
+      return;
+    }
+
+    localStorage.setItem('client_token', data.token);
+    localStorage.setItem('client_user', JSON.stringify(data.usuario));
+    token = data.token; currentUser = data.usuario;
+    initApp();
+    toast(`Bienvenido, ${currentUser.nombre}!`, 'success');
+  } catch { toast('Error de conexión', 'danger'); }
+}
+
+async function register() {
+  const body = {
+    nombre: document.getElementById('reg-nombre').value,
+    email: document.getElementById('reg-email').value,
+    password: document.getElementById('reg-pass').value,
+    // rol siempre es cliente desde el portal público
+  };
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!data.ok) return toast(data.error, 'danger');
+    toast('Cuenta creada. Ahora inicia sesión.', 'success');
+    toggleAuth();
+  } catch { toast('Error de conexión', 'danger'); }
+}
+
+function logout() {
+  localStorage.removeItem('client_token');
+  localStorage.removeItem('client_user');
+  token = null; currentUser = null;
+  if (socket) socket.disconnect();
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('ws-dot').classList.remove('online');
+  document.getElementById('ws-status').textContent = 'Desconectado';
+}
+
+// ════════════════════════════════════════
+//  SOCKET.IO
+// ════════════════════════════════════════
+function connectSocket() {
+  socket = io('http://localhost:3000');
+
+  socket.on('connect', () => {
+    socket.emit('autenticar', token);
+    document.getElementById('ws-dot').classList.add('online');
+    document.getElementById('ws-status').textContent = 'Conectado';
+  });
+
+  socket.on('disconnect', () => {
+    document.getElementById('ws-dot').classList.remove('online');
+    document.getElementById('ws-status').textContent = 'Desconectado';
+  });
+
+  socket.on('nuevo_paquete', (data) => {
+    addActivity(`📦 Nuevo paquete <strong>${data.codigo_tracking}</strong> de ${data.remitente}`, 'accent');
+    toast(`Nuevo paquete: ${data.codigo_tracking}`, 'info');
+  });
+
+  socket.on('estado_actualizado', (data) => {
+    addActivity(`🔄 Paquete <strong>${data.codigo_tracking}</strong> → <em>${data.nuevo_estado}</em> por ${data.actualizado_por}`);
+    toast(`Estado actualizado: ${data.codigo_tracking} → ${data.nuevo_estado}`, 'success');
+  });
+
+  socket.on('nuevo_mensaje', (data) => {
+    // Renderizar siempre que sea el chat activo
+    if (activeChatPaquete == data.paquete_id) {
+      renderMensaje(data);
+    }
+    if (data.usuario_id !== currentUser?.id) {
+      toast(`💬 ${data.autor}: ${data.contenido.substring(0, 40)}`);
+    }
+  });
+
+  socket.on('ubicacion_live', (data) => {
+    addActivity(`📍 Paquete #${data.paquete_id} actualiza ubicación: ${data.descripcion}`);
+  });
+
+  socket.on('usuarios_online', (users) => {
+    document.getElementById('online-count').textContent = `${users.length} usuario(s) online`;
+  });
+
+  socket.on('autenticado', (data) => {
+    console.log('✅ Socket autenticado:', data.mensaje);
+  });
+
+  socket.on('error_auth', (data) => {
+    console.error('❌ Error auth socket:', data.mensaje);
+    toast('Error de autenticación en socket', 'danger');
+  });
+
+  socket.on('error', (data) => {
+    console.error('❌ Error socket:', data.mensaje);
+  });
+}
+
+// ════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const res = await fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    const paquetes = data.paquetes || [];
+    document.getElementById('stat-total').textContent = paquetes.length;
+    document.getElementById('stat-transito').textContent = paquetes.filter(p => p.estado === 'en_transito').length;
+    document.getElementById('stat-entregados').textContent = paquetes.filter(p => p.estado === 'entregado').length;
+  } catch {}
+}
+
+function addActivity(html, type = '') {
+  const feed = document.getElementById('activity-feed');
+  const item = document.createElement('div');
+  item.style.cssText = `padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--${type || 'accent2'});font-size:0.78rem;`;
+  item.innerHTML = `<span style="color:var(--muted);margin-right:8px">${new Date().toLocaleTimeString()}</span>${html}`;
+  feed.insertBefore(item, feed.firstChild);
+  if (feed.children.length > 20) feed.lastChild.remove();
+}
+
+// ════════════════════════════════════════
+//  PAQUETES
+// ════════════════════════════════════════
+async function loadPaquetes() {
+  const container = document.getElementById('paquetes-list');
+  container.innerHTML = '<div class="text-muted">Cargando...</div>';
+  try {
+    const res = await fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (!data.paquetes.length) {
+      container.innerHTML = '<div class="text-muted">No hay paquetes registrados.</div>';
+      return;
+    }
+    container.innerHTML = data.paquetes.map(p => `
+      <div class="paquete-item" onclick="verTracking('${p.codigo_tracking}')">
+        <div class="tracking-code">${p.codigo_tracking}</div>
+        <div class="paquete-info">
+          <div class="paquete-desc">${p.descripcion?.substring(0, 60) || '—'}</div>
+          <div class="paquete-dest">→ ${p.destinatario_nombre || p.destinatario} · ${p.destinatario_direccion?.substring(0, 40)}</div>
+        </div>
+        <span class="badge badge-${p.estado}">${p.estado.replace('_', ' ')}</span>
+      </div>
+    `).join('');
+  } catch { container.innerHTML = '<div class="text-muted">Error al cargar.</div>'; }
+}
+
+async function crearPaquete() {
+  const body = {
+    descripcion: document.getElementById('new-desc').value,
+    peso: parseFloat(document.getElementById('new-peso').value),
+    destinatario_nombre: document.getElementById('new-dest-nombre').value,
+    destinatario_direccion: document.getElementById('new-dest-dir').value,
+    destinatario_telefono: document.getElementById('new-tel').value,
+  };
+  try {
+    const res = await fetch(`${API}/paquetes`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!data.ok) return toast(data.error, 'danger');
+    toast(`✅ Paquete registrado: ${data.codigo_tracking}`, 'success');
+    ['new-desc','new-peso','new-dest-nombre','new-dest-dir','new-tel'].forEach(id => document.getElementById(id).value = '');
+    loadDashboard();
+  } catch { toast('Error al crear paquete', 'danger'); }
+}
+
+// ════════════════════════════════════════
+//  TRACKING
+// ════════════════════════════════════════
+async function buscarTracking() {
+  const codigo = document.getElementById('track-codigo').value.toUpperCase().trim();
+  if (!codigo) return;
+  const result = document.getElementById('tracking-result');
+  result.innerHTML = 'Buscando...';
+  result.classList.add('visible');
+  try {
+    const res = await fetch(`${API}/paquetes/tracking/${codigo}`);
+    const data = await res.json();
+    if (!data.ok) { result.innerHTML = `<div class="text-muted">Paquete no encontrado.</div>`; return; }
+
+    const p = data.paquete;
+    const h = data.historial || [];
+
+    // Suscribir socket al paquete
+    if (socket) socket.emit('seguir_paquete', p.id);
+
+    const estadoLabel = {
+      registrado: 'Registrado', en_transito: 'En Tránsito',
+      en_destino: 'En Destino', entregado: 'Entregado', no_entregado: 'No Entregado'
+    };
+    const eventoLabel = (ev) => ({
+      REGISTRADO: 'Registrado', EN_TRANSITO: 'En Tránsito',
+      EN_DESTINO: 'En Destino', ENTREGADO: 'Entregado', NO_ENTREGADO: 'No Entregado'
+    }[ev] || ev);
+
+    result.innerHTML = `
+      <div class="tracking-header">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Código de seguimiento</div>
+          <div style="font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:1px">${p.codigo_tracking}</div>
+          <div style="font-family:var(--font-body);font-size:0.88rem;color:var(--muted);margin-top:6px">${p.descripcion}</div>
+        </div>
+        <span class="badge badge-${p.estado}" style="font-size:0.75rem;padding:5px 12px">${estadoLabel[p.estado] || p.estado}</span>
+      </div>
+      <div class="grid-2 mb-24">
+        <div style="background:var(--surface2);padding:16px;border:1px solid var(--border)">
+          <div class="tracking-info-label">Destinatario</div>
+          <div class="tracking-info-value">${p.destinatario_nombre}</div>
+          <div class="tracking-info-sub">${p.destinatario_direccion}</div>
+          ${p.destinatario_telefono ? `<div class="tracking-info-sub">${p.destinatario_telefono}</div>` : ''}
+        </div>
+        <div style="background:var(--surface2);padding:16px;border:1px solid var(--border)">
+          <div class="tracking-info-label">Remitente</div>
+          <div class="tracking-info-value">${p.remitente_nombre}</div>
+          ${p.repartidor_nombre ? `
+          <div class="tracking-info-label" style="margin-top:10px">Repartidor asignado</div>
+          <div class="tracking-info-value">${p.repartidor_nombre}</div>` : ''}
+        </div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">Historial de eventos</div>
+      <div class="timeline">
+        ${h.map((ev, i) => `
+          <div class="timeline-item">
+            <div class="timeline-dot ${i === h.length-1 ? 'active' : ''}"></div>
+            <div class="timeline-event">${eventoLabel(ev.evento)}</div>
+            ${ev.descripcion ? `<div class="timeline-desc">${ev.descripcion}</div>` : ''}
+            <div class="timeline-time">${new Date(ev.created_at).toLocaleString('es-PE')}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch { result.innerHTML = '<div class="text-muted">Error de conexión.</div>'; }
+}
+
+function verTracking(codigo) {
+  document.getElementById('track-codigo').value = codigo;
+  showPanel('tracking', document.querySelector('.nav-btn:nth-child(4)'));
+  buscarTracking();
+}
+
+// ════════════════════════════════════════
+//  ACTUALIZAR ESTADO
+// ════════════════════════════════════════
+async function actualizarEstado() {
+  const codigo = document.getElementById('est-codigo').value.toUpperCase().trim();
+  // Primero buscar el ID por código
+  try {
+    const resT = await fetch(`${API}/paquetes/tracking/${codigo}`);
+    const dataT = await resT.json();
+    if (!dataT.ok) return toast('Paquete no encontrado', 'danger');
+
+    const body = {
+      estado: document.getElementById('est-estado').value,
+      descripcion_ubicacion: document.getElementById('est-ubicacion').value,
+      latitud: document.getElementById('est-lat').value || null,
+      longitud: document.getElementById('est-lng').value || null,
+    };
+
+    const res = await fetch(`${API}/paquetes/${dataT.paquete.id}/estado`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!data.ok) return toast(data.error, 'danger');
+    toast('Estado actualizado correctamente', 'success');
+  } catch { toast('Error al actualizar', 'danger'); }
+}
+
+// ════════════════════════════════════════
+//  CHAT
+// ════════════════════════════════════════
+// Cargar lista de paquetes del cliente en el panel chat
+async function loadChatPkgList() {
+  try {
+    const res = await fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    const list = document.getElementById('chat-pkg-list');
+    if (!list) return;
+    if (!data.paquetes.length) {
+      list.innerHTML = '<div class="text-muted" style="padding:12px;font-size:0.78rem">Sin envíos</div>';
+      return;
+    }
+    list.innerHTML = data.paquetes.map(p => `
+      <div onclick="abrirChat(${p.id}, '${p.codigo_tracking}')"
+           id="chatpkg-${p.id}"
+           style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.2s"
+           onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);font-weight:700">${p.codigo_tracking}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:2px">${p.destinatario_nombre || '—'}</div>
+        <span class="badge badge-${p.estado}" style="margin-top:4px;display:inline-block">${p.estado.replace('_',' ')}</span>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function abrirChat(pkgId, codigo) {
+  activeChatPaquete = pkgId;
+
+  // Resaltar seleccionado
+  document.querySelectorAll('[id^="chatpkg-"]').forEach(el => el.style.borderLeft = '');
+  const el = document.getElementById(`chatpkg-${pkgId}`);
+  if (el) el.style.borderLeft = '3px solid var(--accent)';
+
+  // Unirse a la sala del paquete
+  if (socket) socket.emit('seguir_paquete', pkgId);
+
+  document.getElementById('chat-header').textContent = `Chat — ${codigo}`;
+  document.getElementById('chat-messages').innerHTML = '';
+
+  try {
+    const res = await fetch(`${API}/paquetes/${pkgId}/mensajes`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    if (data.mensajes.length === 0) {
+      document.getElementById('chat-messages').innerHTML = '<div class="text-muted" style="padding:16px;font-size:0.78rem">Sin mensajes aún. ¡Escribe el primero!</div>';
+    } else {
+      data.mensajes.forEach(renderMensaje);
+    }
+  } catch(e) { console.error(e); }
+}
+
+function renderMensaje(msg) {
+  // Limpiar placeholder si existe
+  const placeholder = document.getElementById('chat-messages').querySelector('.text-muted');
+  if (placeholder) placeholder.remove();
+
+  const container = document.getElementById('chat-messages');
+  const isMine = msg.usuario_id === currentUser?.id;
+  const div = document.createElement('div');
+  div.className = `chat-msg ${isMine ? 'mine' : ''}`;
+  div.innerHTML = `
+    <div class="msg-bubble">${msg.contenido}</div>
+    <div class="msg-meta">${msg.autor || currentUser.nombre} · ${new Date(msg.timestamp || msg.created_at).toLocaleTimeString('es-PE')}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function enviarMensaje() {
+  const input = document.getElementById('chat-input');
+  const contenido = input.value.trim();
+  if (!contenido || !activeChatPaquete || !socket) return;
+  socket.emit('mensaje_paquete', { paquete_id: activeChatPaquete, contenido });
+  input.value = '';
+}
+
+// ════════════════════════════════════════
+//  UI HELPERS
+// ════════════════════════════════════════
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'paquetes') loadPaquetes();
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'chat') loadChatPkgList();
+}
+
+function toast(msg, type = '') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+</script>
+</body>
+</html>

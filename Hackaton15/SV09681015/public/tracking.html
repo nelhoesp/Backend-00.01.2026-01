@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastrear Envío — CourierOnline</title>
+<script src="https://cdn.socket.io/4.6.2/socket.io.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f2ec;
+  --ink: #1a1714;
+  --ink2: #6b6560;
+  --surface: #ffffff;
+  --border: #e0dbd2;
+  --accent: #d4380d;
+  --accent2: #1677d4;
+  --gold: #d4a20d;
+  --green: #0d9e4a;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  background: var(--ink);
+  padding: 0 40px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem; color: #fff; letter-spacing: 2px;
+}
+.logo span { color: var(--accent); }
+.header-links { display: flex; gap: 20px; }
+.header-link {
+  color: #888; font-size: 0.8rem; font-family: var(--font-mono);
+  text-decoration: none; transition: color 0.2s;
+}
+.header-link:hover { color: #fff; }
+
+/* ── Hero ── */
+.hero {
+  background: var(--ink);
+  padding: 60px 40px 80px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: 'TRACKING';
+  position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-display); font-size: 12rem; color: rgba(255,255,255,0.03);
+  letter-spacing: 10px; pointer-events: none; white-space: nowrap;
+}
+.hero-label {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  color: #fff; letter-spacing: 2px; line-height: 1;
+  margin-bottom: 8px;
+}
+.hero-sub { color: #888; font-size: 0.9rem; margin-bottom: 36px; }
+
+/* ── Search box ── */
+.search-wrap {
+  display: flex; gap: 0; max-width: 580px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.search-input {
+  flex: 1; padding: 16px 20px;
+  background: #fff; border: none;
+  font-family: var(--font-mono); font-size: 1rem;
+  color: var(--ink); outline: none;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.search-input::placeholder { letter-spacing: 1px; color: #bbb; text-transform: none; }
+.search-btn {
+  padding: 16px 28px; background: var(--accent); border: none;
+  color: #fff; font-family: var(--font-display);
+  font-size: 1.1rem; letter-spacing: 2px; cursor: pointer;
+  transition: background 0.2s; white-space: nowrap;
+}
+.search-btn:hover { background: #b82d0a; }
+.search-btn:disabled { background: #888; cursor: not-allowed; }
+
+/* ── Main content ── */
+.container { max-width: 780px; margin: 0 auto; padding: 48px 40px; }
+
+/* ── Estado visual ── */
+.status-hero {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 32px; margin-bottom: 24px;
+  display: none; position: relative; overflow: hidden;
+}
+.status-hero.visible { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.status-stripe {
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.stripe-registrado { background: #ccc; }
+.stripe-en_transito { background: var(--accent2); }
+.stripe-en_destino { background: var(--gold); }
+.stripe-entregado { background: var(--green); }
+.stripe-no_entregado { background: var(--accent); }
+
+.pkg-code {
+  font-family: var(--font-display); font-size: 2.2rem;
+  letter-spacing: 2px; color: var(--ink);
+}
+.pkg-desc { color: var(--ink2); font-size: 0.9rem; margin-top: 6px; }
+.pkg-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; font-family: var(--font-mono);
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.5px;
+}
+.badge-registrado { background: #f0ede8; color: #888; }
+.badge-en_transito { background: #e8f0fc; color: var(--accent2); }
+.badge-en_destino { background: #fef8e8; color: var(--gold); }
+.badge-entregado { background: #e8f5ee; color: var(--green); }
+.badge-no_entregado { background: #fce8e8; color: var(--accent); }
+
+.pkg-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+
+/* ── Info grid ── */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+.info-card {
+  background: var(--bg); padding: 16px;
+  border: 1px solid var(--border);
+}
+.info-label {
+  font-size: 0.65rem; color: var(--ink2); text-transform: uppercase;
+  letter-spacing: 1px; font-family: var(--font-mono); margin-bottom: 6px;
+}
+.info-value { font-size: 0.92rem; font-weight: 500; color: var(--ink); }
+.info-sub { font-size: 0.78rem; color: var(--ink2); margin-top: 3px; }
+
+/* ── Progress bar ── */
+.progress-section { margin-bottom: 32px; }
+.progress-label {
+  font-size: 0.65rem; color: var(--ink2); text-transform: uppercase;
+  letter-spacing: 1px; font-family: var(--font-mono); margin-bottom: 12px;
+}
+.progress-steps {
+  display: flex; align-items: center; gap: 0;
+}
+.step {
+  flex: 1; text-align: center; position: relative;
+}
+.step::after {
+  content: ''; position: absolute;
+  top: 12px; left: 50%; width: 100%; height: 2px;
+  background: var(--border); z-index: 0;
+}
+.step:last-child::after { display: none; }
+.step-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--border); border: 3px solid var(--bg);
+  margin: 0 auto 8px; position: relative; z-index: 1;
+  transition: all 0.3s;
+}
+.step.done .step-dot { background: var(--green); }
+.step.active .step-dot {
+  background: var(--accent2);
+  box-shadow: 0 0 0 4px rgba(22,119,212,0.2);
+  animation: pulseDot 2s infinite;
+}
+.step.failed .step-dot { background: var(--accent); }
+@keyframes pulseDot { 0%,100%{box-shadow:0 0 0 4px rgba(22,119,212,0.2)} 50%{box-shadow:0 0 0 8px rgba(22,119,212,0.1)} }
+.step-label { font-size: 0.65rem; color: var(--ink2); font-family: var(--font-mono); letter-spacing: 0.3px; }
+.step.done .step-label, .step.active .step-label { color: var(--ink); font-weight: 500; }
+
+/* ── Timeline ── */
+.timeline-section { }
+.timeline-label {
+  font-size: 0.65rem; color: var(--ink2); text-transform: uppercase;
+  letter-spacing: 1px; font-family: var(--font-mono); margin-bottom: 16px;
+}
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
+  width: 2px; background: var(--border);
+}
+.tl-item { position: relative; margin-bottom: 24px; }
+.tl-dot {
+  position: absolute; left: -32px; top: 4px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--border); border: 3px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-dot.last { background: var(--accent2); border-color: var(--bg); }
+.tl-dot.entregado { background: var(--green); }
+.tl-dot.no_entregado { background: var(--accent); }
+.tl-event {
+  font-size: 0.82rem; font-weight: 600; color: var(--ink);
+  margin-bottom: 3px;
+}
+.tl-desc { font-size: 0.8rem; color: var(--ink2); }
+.tl-time { font-size: 0.7rem; color: var(--ink2); font-family: var(--font-mono); margin-top: 3px; }
+
+/* ── Live indicator ── */
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; font-family: var(--font-mono); color: var(--green);
+  background: #e8f5ee; padding: 4px 10px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+/* ── Not found ── */
+.not-found {
+  text-align: center; padding: 60px 20px; display: none;
+}
+.not-found.visible { display: block; animation: fadeUp 0.4s ease; }
+.nf-icon { font-size: 3rem; margin-bottom: 16px; }
+.nf-title { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 8px; }
+.nf-sub { color: var(--ink2); font-size: 0.88rem; }
+
+/* ── Footer ── */
+footer {
+  background: var(--ink); color: #555;
+  text-align: center; padding: 24px;
+  font-size: 0.75rem; font-family: var(--font-mono);
+  margin-top: 60px;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ── Loading ── */
+.loading {
+  text-align: center; padding: 40px;
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink2);
+  display: none;
+}
+.loading.visible { display: block; }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Update toast ── */
+#live-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--ink); color: #fff;
+  padding: 12px 18px; font-family: var(--font-mono); font-size: 0.78rem;
+  border-left: 4px solid var(--accent2);
+  display: none; animation: slideIn 0.3s ease;
+  max-width: 300px;
+}
+@keyframes slideIn { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Pack<span>Go</span></div>
+  <div class="header-links">
+    <a href="/index.html" class="header-link">Portal Cliente →</a>
+    <a href="/admin.html" class="header-link">Admin →</a>
+  </div>
+</header>
+
+<!-- Hero con buscador -->
+<div class="hero">
+  <div class="hero-label">rastreo en tiempo real</div>
+  <div class="hero-title">RASTREA TU ENVÍO</div>
+  <div class="hero-sub">Ingresa tu código de seguimiento para ver el estado de tu paquete</div>
+  <div class="search-wrap">
+    <input class="search-input" id="codigo-input" type="text"
+           placeholder="Ej: CUR537989"
+           oninput="this.value = this.value.toUpperCase()"
+           onkeydown="if(event.key==='Enter') buscar()">
+    <button class="search-btn" id="search-btn" onclick="buscar()">RASTREAR →</button>
+  </div>
+</div>
+
+<!-- Contenido -->
+<div class="container">
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Buscando tu paquete...
+  </div>
+
+  <!-- No encontrado -->
+  <div class="not-found" id="not-found">
+    <div class="nf-icon">📭</div>
+    <div class="nf-title">PAQUETE NO ENCONTRADO</div>
+    <div class="nf-sub">Verifica el código e intenta nuevamente.<br>El código tiene el formato <strong>CUR######</strong></div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="status-hero" id="result-card">
+    <div class="status-stripe" id="result-stripe"></div>
+    <div class="pkg-header">
+      <div>
+        <div class="pkg-code" id="r-codigo">—</div>
+        <div class="pkg-desc" id="r-desc">—</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        <span class="pkg-badge" id="r-badge">—</span>
+        <span class="live-badge"><span class="live-dot"></span>EN VIVO</span>
+      </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-section">
+      <div class="progress-label">Estado del envío</div>
+      <div class="progress-steps" id="progress-steps">
+        <div class="step" id="step-registrado">
+          <div class="step-dot"></div>
+          <div class="step-label">Registrado</div>
+        </div>
+        <div class="step" id="step-en_transito">
+          <div class="step-dot"></div>
+          <div class="step-label">En Tránsito</div>
+        </div>
+        <div class="step" id="step-en_destino">
+          <div class="step-dot"></div>
+          <div class="step-label">En Destino</div>
+        </div>
+        <div class="step" id="step-entregado">
+          <div class="step-dot"></div>
+          <div class="step-label">Entregado</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-label">Destinatario</div>
+        <div class="info-value" id="r-dest-nombre">—</div>
+        <div class="info-sub" id="r-dest-dir">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Remitente</div>
+        <div class="info-value" id="r-remitente">—</div>
+        <div class="info-sub" id="r-repartidor"></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-section">
+      <div class="timeline-label">Historial de eventos</div>
+      <div class="timeline" id="r-timeline"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="live-toast"></div>
+
+<footer>
+  PackGo © 2024 — Hackathon
+</footer>
+
+<script>
+const API = 'http://localhost:3000/api';
+let socket = null;
+let currentPkgId = null;
+
+const estadoLabel = {
+  registrado: 'Registrado', en_transito: 'En Tránsito',
+  en_destino: 'En Destino', entregado: 'Entregado', no_entregado: 'No Entregado'
+};
+const eventoLabel = (ev) => ({
+  REGISTRADO: 'Registrado', EN_TRANSITO: 'En Tránsito',
+  EN_DESTINO: 'En Destino', ENTREGADO: 'Entregado', NO_ENTREGADO: 'No Entregado'
+}[ev] || ev);
+
+const orden = ['registrado', 'en_transito', 'en_destino', 'entregado'];
+
+// ── Buscar paquete ──────────────────────────────────────────
+async function buscar() {
+  const codigo = document.getElementById('codigo-input').value.trim();
+  if (!codigo) return;
+
+  hide('result-card'); hide('not-found');
+  show('loading');
+  document.getElementById('search-btn').disabled = true;
+
+  try {
+    const res = await fetch(`${API}/paquetes/tracking/${codigo}`);
+    const data = await res.json();
+    hide('loading');
+    document.getElementById('search-btn').disabled = false;
+
+    if (!data.ok) { show('not-found'); return; }
+
+    renderResultado(data.paquete, data.historial || []);
+    suscribirSocket(data.paquete.id);
+    show('result-card');
+
+  } catch(e) {
+    hide('loading');
+    document.getElementById('search-btn').disabled = false;
+    show('not-found');
+  }
+}
+
+// ── Renderizar resultado ────────────────────────────────────
+function renderResultado(p, historial) {
+  currentPkgId = p.id;
+
+  document.getElementById('r-codigo').textContent = p.codigo_tracking;
+  document.getElementById('r-desc').textContent = p.descripcion || '—';
+  document.getElementById('r-dest-nombre').textContent = p.destinatario_nombre || '—';
+  document.getElementById('r-dest-dir').textContent = p.destinatario_direccion || '—';
+  document.getElementById('r-remitente').textContent = p.remitente_nombre || '—';
+  document.getElementById('r-repartidor').textContent = p.repartidor_nombre ? `Repartidor: ${p.repartidor_nombre}` : '';
+
+  // Badge
+  const badge = document.getElementById('r-badge');
+  badge.textContent = estadoLabel[p.estado] || p.estado;
+  badge.className = `pkg-badge badge-${p.estado}`;
+
+  // Stripe
+  document.getElementById('result-stripe').className = `status-stripe stripe-${p.estado}`;
+
+  // Progress bar
+  actualizarProgress(p.estado);
+
+  // Timeline
+  renderTimeline(historial, p.estado);
+}
+
+function actualizarProgress(estado) {
+  const idxActual = orden.indexOf(estado);
+  orden.forEach((s, i) => {
+    const step = document.getElementById(`step-${s}`);
+    if (!step) return;
+    step.className = 'step';
+    if (estado === 'no_entregado' && s === 'entregado') {
+      step.classList.add('failed');
+    } else if (i < idxActual) {
+      step.classList.add('done');
+    } else if (i === idxActual) {
+      step.classList.add('active');
+    }
+  });
+}
+
+function renderTimeline(historial, estadoActual) {
+  const tl = document.getElementById('r-timeline');
+  if (!historial.length) {
+    tl.innerHTML = '<div style="color:var(--ink2);font-size:0.82rem">Sin eventos registrados.</div>';
+    return;
+  }
+  tl.innerHTML = historial.map((ev, i) => {
+    const isLast = i === historial.length - 1;
+    const dotClass = isLast
+      ? (estadoActual === 'no_entregado' ? 'no_entregado' : estadoActual === 'entregado' ? 'entregado' : 'last')
+      : '';
+    return `
+      <div class="tl-item">
+        <div class="tl-dot ${dotClass}"></div>
+        <div class="tl-event">${eventoLabel(ev.evento)}</div>
+        ${ev.descripcion ? `<div class="tl-desc">${ev.descripcion}</div>` : ''}
+        <div class="tl-time">${new Date(ev.created_at).toLocaleString('es-PE')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Socket — actualizaciones en vivo ───────────────────────
+function suscribirSocket(pkgId) {
+  if (socket) { socket.disconnect(); socket = null; }
+
+  socket = io('http://localhost:3000');
+  socket.on('connect', () => {
+    socket.emit('seguir_paquete', pkgId);
+  });
+
+  socket.on('estado_actualizado', (data) => {
+    if (data.paquete_id != pkgId) return;
+
+    // Actualizar badge y progress sin recargar
+    const badge = document.getElementById('r-badge');
+    if (badge) {
+      badge.textContent = estadoLabel[data.nuevo_estado] || data.nuevo_estado;
+      badge.className = `pkg-badge badge-${data.nuevo_estado}`;
+    }
+    document.getElementById('result-stripe').className = `status-stripe stripe-${data.nuevo_estado}`;
+    actualizarProgress(data.nuevo_estado);
+
+    // Agregar al timeline
+    const tl = document.getElementById('r-timeline');
+    const item = document.createElement('div');
+    item.className = 'tl-item';
+    item.style.animation = 'fadeUp 0.4s ease';
+    item.innerHTML = `
+      <div class="tl-dot last"></div>
+      <div class="tl-event">${estadoLabel[data.nuevo_estado] || data.nuevo_estado}</div>
+      ${data.descripcion_ubicacion ? `<div class="tl-desc">${data.descripcion_ubicacion}</div>` : ''}
+      <div class="tl-time">${new Date().toLocaleString('es-PE')}</div>
+    `;
+    // Quitar 'last' del anterior
+    tl.querySelectorAll('.tl-dot.last').forEach(d => d.classList.remove('last'));
+    tl.appendChild(item);
+    showLiveToast(`Estado actualizado: ${estadoLabel[data.nuevo_estado]}`);
+  });
+}
+
+function showLiveToast(msg) {
+  const t = document.getElementById('live-toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 4000);
+}
+
+// ── Helpers ─────────────────────────────────────────────────
+function show(id) { document.getElementById(id).classList.add('visible'); }
+function hide(id) { document.getElementById(id).classList.remove('visible'); }
+
+// Auto-buscar si viene ?codigo= en la URL
+window.onload = () => {
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get('codigo');
+  if (codigo) {
+    document.getElementById('codigo-input').value = codigo.toUpperCase();
+    buscar();
+  }
+};
+</script>
+</body>
+</html>

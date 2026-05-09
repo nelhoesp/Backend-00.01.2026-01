@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PackGo — Admin</title>
+  <script src="https://cdn.socket.io/4.6.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<style>
+  :root {
+    --bg: #f4f1eb;
+    --surface: #ffffff;
+    --surface2: #f9f7f3;
+    --border: #e0dbd0;
+    --ink: #1a1814;
+    --ink2: #5a5650;
+    --accent: #c8401a;
+    --accent2: #1a6bc8;
+    --gold: #c89a1a;
+    --green: #1a8c4a;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    min-height: 100vh;
+}
+
+/* ── Auth ── */
+#auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 800px;
+    min-height: 480px;
+    box-shadow: var(--shadow-lg);
+}
+
+.auth-left {
+    background: var(--ink);
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.auth-logo {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.auth-logo span {
+    color: var(--accent);
+}
+
+.auth-tagline {
+    color: var(--ink2);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    margin-top: 8px;
+}
+
+.auth-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 6px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    align-self: flex-start;
+}
+
+.auth-desc {
+    color: #888;
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+.auth-right {
+    background: var(--surface);
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-right h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ink2);
+    margin-bottom: 5px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--accent);
+}
+
+.btn {
+    padding: 11px 22px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #a83314;
+}
+
+.btn-secondary {
+    background: var(--surface2);
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.72rem;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.err-msg {
+    color: var(--accent);
+    font-size: 0.78rem;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+}
+
+/* ── Layout ── */
+header {
+    background: var(--ink);
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.h-logo {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.h-logo span {
+    color: var(--accent);
+}
+
+.h-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.h-user {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.h-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 8px;
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+}
+
+.ws-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: #888;
+    font-family: var(--font-mono);
+}
+
+.ws-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #555;
+}
+
+.ws-dot.on {
+    background: #4caf50;
+    box-shadow: 0 0 6px #4caf50;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1
+    }
+
+    50% {
+        opacity: 0.4
+    }
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 56px);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+}
+
+.nav-section {
+    padding: 8px 20px 4px;
+    font-size: 0.65rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: var(--ink2);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    border-right: 3px solid transparent;
+}
+
+.nav-btn:hover {
+    background: var(--surface2);
+    color: var(--ink);
+}
+
+.nav-btn.active {
+    color: var(--accent);
+    background: #fef5f2;
+    border-right-color: var(--accent);
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-stats {
+    margin: 20px;
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+}
+
+.ss-label {
+    font-size: 0.65rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+}
+
+.ss-val {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--ink);
+    letter-spacing: 1px;
+}
+
+.ss-sub {
+    font-size: 0.72rem;
+    color: var(--ink2);
+}
+
+/* ── Main ── */
+main {
+    padding: 28px 32px;
+    overflow-y: auto;
+}
+
+.panel {
+    display: none;
+}
+
+.panel.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.panel-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--ink);
+}
+
+.panel-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 2px;
+}
+
+.panel-sub {
+    font-size: 0.78rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+}
+
+/* ── Stats Cards ── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.stat-card.red::before {
+    background: var(--accent);
+}
+
+.stat-card.blue::before {
+    background: var(--accent2);
+}
+
+.stat-card.gold::before {
+    background: var(--gold);
+}
+
+.stat-card.green::before {
+    background: var(--green);
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    margin: 4px 0;
+}
+
+.stat-sub {
+    font-size: 0.72rem;
+    color: var(--ink2);
+}
+
+.stat-icon {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    font-size: 1.6rem;
+    opacity: 0.15;
+}
+
+/* ── Charts ── */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+}
+
+.chart-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.chart-wrap {
+    position: relative;
+    height: 220px;
+}
+
+/* ── Tables ── */
+.table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.table-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 0.68rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+}
+
+td {
+    padding: 11px 16px;
+    font-size: 0.83rem;
+    border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: var(--surface2);
+}
+
+.tracking-code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* ── Badges ── */
+.badge {
+    padding: 3px 9px;
+    font-size: 0.67rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.3px;
+    font-weight: 500;
+}
+
+.badge-registrado {
+    background: #f0ede8;
+    color: #888;
+}
+
+.badge-en_transito {
+    background: #e8f0fc;
+    color: var(--accent2);
+}
+
+.badge-en_destino {
+    background: #fef8e8;
+    color: var(--gold);
+}
+
+.badge-entregado {
+    background: #e8f5ee;
+    color: var(--green);
+}
+
+.badge-no_entregado {
+    background: #fce8e8;
+    color: var(--accent);
+}
+
+.badge-cliente {
+    background: #e8f0fc;
+    color: var(--accent2);
+}
+
+.badge-repartidor {
+    background: #fef8e8;
+    color: var(--gold);
+}
+
+.badge-admin {
+    background: #fce8e8;
+    color: var(--accent);
+}
+
+/* ── Modal ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(26, 24, 20, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal {
+    background: var(--surface);
+    width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--ink2);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ── Chat Panel ── */
+.chat-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    height: 520px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.chat-list {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+
+.chat-list-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.chat-list-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.chat-list-item:hover {
+    background: var(--surface2);
+}
+
+.chat-list-item.active {
+    background: #fef5f2;
+    border-right: 3px solid var(--accent);
+}
+
+.cli-code {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+}
+
+.cli-preview {
+    font-size: 0.78rem;
+    color: var(--ink2);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cli-time {
+    font-size: 0.68rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+}
+
+.chat-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-main-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-msgs {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.msg {
+    max-width: 72%;
+}
+
+.msg.admin {
+    align-self: flex-end;
+}
+
+.msg-bubble {
+    padding: 9px 13px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.msg .msg-bubble {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+}
+
+.msg.admin .msg-bubble {
+    background: var(--ink);
+    color: #fff;
+}
+
+.msg-meta {
+    font-size: 0.65rem;
+    color: var(--ink2);
+    margin-top: 3px;
+    font-family: var(--font-mono);
+}
+
+.msg.admin .msg-meta {
+    text-align: right;
+}
+
+.chat-input-area {
+    border-top: 1px solid var(--border);
+    display: flex;
+}
+
+.chat-input-area input {
+    flex: 1;
+    border: none;
+    padding: 13px 16px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    background: transparent;
+    outline: none;
+}
+
+.chat-input-area button {
+    padding: 13px 20px;
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.chat-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--ink2);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+/* ── Activity Feed ── */
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.af-item {
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-left: 3px solid var(--border);
+    font-size: 0.78rem;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.af-item.red {
+    border-left-color: var(--accent);
+}
+
+.af-item.blue {
+    border-left-color: var(--accent2);
+}
+
+.af-item.green {
+    border-left-color: var(--green);
+}
+
+.af-time {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--ink2);
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+/* ── Usuarios Panel ── */
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.user-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-email {
+    font-size: 0.75rem;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+/* ── Toast ── */
+#toast-wrap {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    background: var(--ink);
+    color: #fff;
+    padding: 11px 16px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    border-left: 4px solid var(--accent);
+    min-width: 260px;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast.green {
+    border-left-color: var(--green);
+}
+
+.toast.blue {
+    border-left-color: var(--accent2);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(110%);
+        opacity: 0
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1
+    }
+}
+
+/* ── Misc ── */
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.flex-gap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--surface2);
+    color: var(--ink);
+    outline: none;
+    width: 200px;
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+}
+
+.empty-state {
+    padding: 40px;
+    text-align: center;
+    color: var(--ink2);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+}
+</style>
+
+<body>
+
+  <!-- ══ AUTH ══════════════════════════════════════════ -->
+  <div id="auth-screen">
+    <div class="auth-wrap">
+      <div class="auth-left">
+        <div>
+          <div class="auth-logo">Pack<span>Go</span></div>
+          <div class="auth-tagline">Panel de Administración</div>
+        </div>
+        <div>
+          <div class="auth-badge">ADMIN ACCESS</div>
+          <div class="auth-desc" style="margin-top:12px">
+            Acceso restringido al panel de control. Solo usuarios con rol <strong style="color:#fff">admin</strong>
+            pueden ingresar.
+          </div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:0.75rem;color:#444">
+          PackGo v1.0 · Hackathon15
+        </div>
+      </div>
+      <div class="auth-right">
+        <h2>INICIAR SESIÓN</h2>
+        <form onsubmit="return false">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="admin@courier.com" autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+          </div>
+          <div class="err-msg" id="login-err"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="login()">ACCEDER</button>
+        </form>
+        <div style="margin-top:16px;font-size:0.75rem;color:var(--ink2);font-family:var(--font-mono)">
+          ¿Eres cliente? <a href="/index.html" style="color:var(--accent)">Ir al portal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HEADER ═════════════════════════════════════════ -->
+  <header>
+    <div class="h-logo">Pack<span>Go</span> <span
+        style="color:#555;font-size:0.9rem;letter-spacing:3px">ADMIN</span></div>
+    <div class="h-right">
+      <div class="ws-indicator">
+        <div class="ws-dot" id="ws-dot"></div>
+        <span id="ws-status">Desconectado</span>
+      </div>
+      <div class="h-user" id="h-user">—</div>
+      <div class="h-badge">ADMIN</div>
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </header>
+
+  <!-- ══ APP ════════════════════════════════════════════ -->
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="nav-section">Principal</div>
+      <button class="nav-btn active" onclick="showPanel('dashboard',this)"><span class="nav-icon">▦</span>
+        Dashboard</button>
+      <button class="nav-btn" onclick="showPanel('paquetes',this)"><span class="nav-icon">◻</span> Paquetes</button>
+      <div class="nav-section">Gestión</div>
+      <button class="nav-btn" onclick="showPanel('usuarios',this)"><span class="nav-icon">◈</span> Usuarios</button>
+      <button class="nav-btn" onclick="showPanel('chats',this)"><span class="nav-icon">◇</span> Chats</button>
+      <div class="sidebar-stats" style="margin-top:auto">
+        <div class="ss-label">Online ahora</div>
+        <div class="ss-val" id="sb-online">0</div>
+        <div class="ss-sub">usuarios conectados</div>
+      </div>
+    </nav>
+
+    <main>
+
+      <!-- ── DASHBOARD ── -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="panel-header">
+          <div class="panel-title">DASHBOARD</div>
+          <div class="panel-sub" id="dash-time">—</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card red">
+            <div class="stat-icon">📦</div>
+            <div class="stat-label">Total Paquetes</div>
+            <div class="stat-value" id="s-total">—</div>
+            <div class="stat-sub">registrados</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">🚚</div>
+            <div class="stat-label">En Tránsito</div>
+            <div class="stat-value" id="s-transito">—</div>
+            <div class="stat-sub">en camino</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✓</div>
+            <div class="stat-label">Entregados</div>
+            <div class="stat-value" id="s-entregados">—</div>
+            <div class="stat-sub">completados</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Usuarios</div>
+            <div class="stat-value" id="s-usuarios">—</div>
+            <div class="stat-sub">registrados</div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">ESTADOS DE PAQUETES</div>
+            <div class="chart-wrap"><canvas id="chart-estados"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">USUARIOS POR ROL</div>
+            <div class="chart-wrap"><canvas id="chart-roles"></canvas></div>
+          </div>
+        </div>
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-title">ACTIVIDAD EN TIEMPO REAL</div>
+            <button class="btn btn-secondary btn-sm"
+              onclick="document.getElementById('activity-feed').innerHTML=''">Limpiar</button>
+          </div>
+          <div style="padding:16px">
+            <div class="activity-feed" id="activity-feed">
+              <div class="af-item"><span class="af-time">—</span><span>Esperando actividad...</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAQUETES ── -->
+      <div class="panel" id="panel-paquetes">
+        <div class="panel-header">
+          <div class="panel-title">PAQUETES</div>
+          <div class="flex-gap">
+            <input class="search-input" id="pkg-search" placeholder="Buscar tracking..." oninput="filtrarPaquetes()">
+            <select class="search-input" id="pkg-filtro" onchange="filtrarPaquetes()" style="width:140px">
+              <option value="">Todos los estados</option>
+              <option value="registrado">Registrado</option>
+              <option value="en_transito">En Tránsito</option>
+              <option value="en_destino">En Destino</option>
+              <option value="entregado">Entregado</option>
+              <option value="no_entregado">No Entregado</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="loadPaquetes()">↻</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Tracking</th>
+                <th>Descripción</th>
+                <th>Remitente</th>
+                <th>Destinatario</th>
+                <th>Repartidor</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="pkg-tbody">
+              <tr>
+                <td colspan="7" class="empty-state">Cargando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── USUARIOS ── -->
+      <div class="panel" id="panel-usuarios">
+        <div class="panel-header">
+          <div class="panel-title">USUARIOS</div>
+          <button class="btn btn-primary btn-sm" onclick="openModalNuevoUsuario()">+ Nuevo usuario</button>
+        </div>
+        <div class="user-grid" id="user-grid">
+          <div class="empty-state">Cargando...</div>
+        </div>
+      </div>
+
+      <!-- ── CHATS ── -->
+      <div class="panel" id="panel-chats">
+        <div class="panel-header">
+          <div class="panel-title">CHATS DE PAQUETES</div>
+          <div class="panel-sub">Vista en tiempo real de todas las conversaciones</div>
+        </div>
+        <div class="chat-layout">
+          <div class="chat-list">
+            <div class="chat-list-header">CONVERSACIONES</div>
+            <div id="chat-list-items">
+              <div class="empty-state" style="padding:20px;font-size:0.75rem">Cargando paquetes...</div>
+            </div>
+          </div>
+          <div class="chat-main" id="chat-main">
+            <div class="chat-empty">← Selecciona un paquete</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ══ MODAL ASIGNAR REPARTIDOR ══════════════════════ -->
+  <div class="modal-overlay" id="modal-asignar">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">ASIGNAR REPARTIDOR</div>
+        <button class="modal-close" onclick="closeModal('modal-asignar')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Paquete</label>
+          <input type="text" id="ma-paquete" readonly style="background:#f0ede8">
+        </div>
+        <div class="form-group">
+          <label>Seleccionar Repartidor</label>
+          <select id="ma-repartidor"></select>
+        </div>
+        <div class="form-group">
+          <label>Nuevo Estado</label>
+          <select id="ma-estado">
+            <option value="en_transito">En Tránsito</option>
+            <option value="en_destino">En Destino</option>
+            <option value="entregado">Entregado</option>
+            <option value="no_entregado">No Entregado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nota de ubicación</label>
+          <input type="text" id="ma-nota" placeholder="Almacén central, Lima...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-asignar')">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmarAsignacion()">Confirmar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL NUEVO USUARIO ════════════════════════════ -->
+  <div class="modal-overlay" id="modal-usuario">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">NUEVO USUARIO</div>
+        <button class="modal-close" onclick="closeModal('modal-usuario')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="return false">
+          <div class="form-group"><label>Nombre</label><input type="text" id="nu-nombre" placeholder="Nombre completo" autocomplete="off">
+          </div>
+          <div class="form-group"><label>Email</label><input type="email" id="nu-email" placeholder="email@ejemplo.com" autocomplete="off">
+          </div>
+          <div class="form-group"><label>Contraseña</label><input type="password" id="nu-pass" placeholder="••••••••" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label>Rol</label>
+            <select id="nu-rol">
+              <option value="cliente">Cliente</option>
+              <option value="repartidor">Repartidor</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-usuario')">Cancelar</button>
+        <button class="btn btn-primary" onclick="crearUsuario()">Crear usuario →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-wrap"></div>
+
+  <script>
+    // ════════════════════════════════════════
+    //  ESTADO
+    // ════════════════════════════════════════
+    const API = 'http://localhost:3000/api';
+    let token = localStorage.getItem('admin_token');
+    let currentUser = JSON.parse(localStorage.getItem('admin_user') || 'null');
+    let socket = null;
+    let allPaquetes = [];
+    let allUsuarios = [];
+    let activeChatPkg = null;
+    let selectedPkgId = null;
+    let chartEstados = null;
+    let chartRoles = null;
+
+    // ════════════════════════════════════════
+    //  INIT
+    // ════════════════════════════════════════
+    window.onload = () => {
+      if (token && currentUser?.rol === 'admin') initAdmin();
+      setInterval(() => {
+        document.getElementById('dash-time').textContent = new Date().toLocaleString('es-PE');
+      }, 1000);
+    };
+
+    function initAdmin() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('h-user').textContent = currentUser.nombre;
+      connectSocket();
+      loadDashboard();
+      loadPaquetes();
+      loadUsuarios();
+      loadChatList();
+    }
+
+    // ════════════════════════════════════════
+    //  AUTH
+    // ════════════════════════════════════════
+    async function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-pass').value;
+      document.getElementById('login-err').textContent = '';
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!data.ok) { document.getElementById('login-err').textContent = data.error; return; }
+        if (data.usuario.rol !== 'admin') {
+          document.getElementById('login-err').textContent = '⚠ Acceso denegado. Solo administradores.';
+          return;
+        }
+        localStorage.setItem('admin_token', data.token);
+        localStorage.setItem('admin_user', JSON.stringify(data.usuario));
+        token = data.token; currentUser = data.usuario;
+        initAdmin();
+        toast('Bienvenido al panel admin', 'green');
+      } catch { document.getElementById('login-err').textContent = 'Error de conexión'; }
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      if (socket) socket.disconnect();
+      location.reload();
+    }
+
+    // ════════════════════════════════════════
+    //  SOCKET
+    // ════════════════════════════════════════
+    function connectSocket() {
+      socket = io('http://localhost:3000');
+      socket.on('connect', () => {
+        socket.emit('autenticar', token);
+        document.getElementById('ws-dot').classList.add('on');
+        document.getElementById('ws-status').textContent = 'En línea';
+      });
+      socket.on('disconnect', () => {
+        document.getElementById('ws-dot').classList.remove('on');
+        document.getElementById('ws-status').textContent = 'Desconectado';
+      });
+      socket.on('nuevo_paquete', (d) => {
+        addActivity(`📦 Nuevo paquete <strong>${d.codigo_tracking}</strong> — ${d.remitente}`, 'blue');
+        toast(`Nuevo paquete: ${d.codigo_tracking}`, 'blue');
+        loadPaquetes(); loadDashboard();
+      });
+      socket.on('estado_actualizado', (d) => {
+        addActivity(`🔄 <strong>${d.codigo_tracking}</strong> → ${d.nuevo_estado} por ${d.actualizado_por}`, 'red');
+        loadPaquetes(); loadDashboard();
+      });
+      socket.on('nuevo_mensaje', (d) => {
+        addActivity(`💬 Mensaje en paquete #${d.paquete_id} — ${d.autor}`, '');
+        if (activeChatPkg == d.paquete_id) {
+          renderMsg(d, false);
+        }
+        updateChatPreview(d);
+      });
+      socket.on('usuarios_online', (users) => {
+        document.getElementById('sb-online').textContent = users.length;
+      });
+    }
+
+    // ════════════════════════════════════════
+    //  DASHBOARD
+    // ════════════════════════════════════════
+    async function loadDashboard() {
+      try {
+        const [rp, ru] = await Promise.all([
+          fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+          fetch(`${API}/usuarios`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+        ]);
+
+        const paquetes = rp.paquetes || [];
+        const usuarios = ru.usuarios || [];
+
+        document.getElementById('s-total').textContent = paquetes.length;
+        document.getElementById('s-transito').textContent = paquetes.filter(p => p.estado === 'en_transito').length;
+        document.getElementById('s-entregados').textContent = paquetes.filter(p => p.estado === 'entregado').length;
+        document.getElementById('s-usuarios').textContent = usuarios.length;
+
+        renderChartEstados(paquetes);
+        renderChartRoles(usuarios);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderChartEstados(paquetes) {
+      const counts = { registrado: 0, en_transito: 0, en_destino: 0, entregado: 0, no_entregado: 0 };
+      paquetes.forEach(p => { if (counts[p.estado] !== undefined) counts[p.estado]++; });
+      const ctx = document.getElementById('chart-estados').getContext('2d');
+      if (chartEstados) chartEstados.destroy();
+      chartEstados = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Registrado', 'En Tránsito', 'En Destino', 'Entregado', 'No Entregado'],
+          datasets: [{ data: Object.values(counts), backgroundColor: ['#d0c8b8', '#1a6bc8', '#c89a1a', '#1a8c4a', '#c8401a'], borderWidth: 0 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'DM Mono', size: 11 }, padding: 12 } } } }
+      });
+    }
+
+    function renderChartRoles(usuarios) {
+      const counts = { cliente: 0, repartidor: 0, admin: 0 };
+      usuarios.forEach(u => { if (counts[u.rol] !== undefined) counts[u.rol]++; });
+      const ctx = document.getElementById('chart-roles').getContext('2d');
+      if (chartRoles) chartRoles.destroy();
+      chartRoles = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Clientes', 'Repartidores', 'Admins'],
+          datasets: [{ data: Object.values(counts), backgroundColor: ['#1a6bc8', '#c89a1a', '#c8401a'], borderWidth: 0, borderRadius: 2 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { font: { family: 'DM Mono', size: 10 }, stepSize: 1 }, grid: { color: '#f0ede8' } }, x: { ticks: { font: { family: 'DM Mono', size: 10 } }, grid: { display: false } } }
+        }
+      });
+    }
+
+    function addActivity(html, type = '') {
+      const feed = document.getElementById('activity-feed');
+      const item = document.createElement('div');
+      item.className = `af-item ${type}`;
+      item.innerHTML = `<span class="af-time">${new Date().toLocaleTimeString('es-PE')}</span><span>${html}</span>`;
+      feed.insertBefore(item, feed.firstChild);
+      if (feed.children.length > 30) feed.lastChild.remove();
+    }
+
+    // ════════════════════════════════════════
+    //  PAQUETES
+    // ════════════════════════════════════════
+    async function loadPaquetes() {
+      try {
+        const res = await fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        allPaquetes = data.paquetes || [];
+        renderPaquetes(allPaquetes);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderPaquetes(lista) {
+      const tbody = document.getElementById('pkg-tbody');
+      if (!lista.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No hay paquetes</td></tr>'; return; }
+      tbody.innerHTML = lista.map(p => `
+    <tr>
+      <td><span class="tracking-code">${p.codigo_tracking}</span></td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.descripcion || '—'}</td>
+      <td>${p.remitente || p.remitente_nombre || '—'}</td>
+      <td>${p.destinatario_nombre || p.destinatario || '—'}</td>
+      <td>${p.repartidor_nombre || p.repartidor || '<span style="color:var(--ink2)">Sin asignar</span>'}</td>
+      <td><span class="badge badge-${p.estado}">${p.estado?.replace('_', ' ')}</span></td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="openAsignar(${p.id},'${p.codigo_tracking}')">Gestionar</button>
+      </td>
+    </tr>
+  `).join('');
+    }
+
+    function filtrarPaquetes() {
+      const q = document.getElementById('pkg-search').value.toLowerCase();
+      const f = document.getElementById('pkg-filtro').value;
+      let lista = allPaquetes;
+      if (q) lista = lista.filter(p => p.codigo_tracking?.toLowerCase().includes(q) || p.descripcion?.toLowerCase().includes(q));
+      if (f) lista = lista.filter(p => p.estado === f);
+      renderPaquetes(lista);
+    }
+
+    // ════════════════════════════════════════
+    //  MODAL ASIGNAR
+    // ════════════════════════════════════════
+    function openAsignar(pkgId, codigo) {
+      selectedPkgId = pkgId;
+      document.getElementById('ma-paquete').value = codigo;
+      const sel = document.getElementById('ma-repartidor');
+      const repartidores = allUsuarios.filter(u => u.rol === 'repartidor');
+      sel.innerHTML = '<option value="">Sin asignar</option>' + repartidores.map(r => `<option value="${r.id}">${r.nombre}</option>`).join('');
+      openModal('modal-asignar');
+    }
+
+    async function confirmarAsignacion() {
+      const repartidor_id = document.getElementById('ma-repartidor').value;
+      const estado = document.getElementById('ma-estado').value;
+      const nota = document.getElementById('ma-nota').value;
+      try {
+        // Actualizar repartidor si se seleccionó
+        if (repartidor_id) {
+          await fetch(`${API}/paquetes/${selectedPkgId}/repartidor`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ repartidor_id })
+          });
+        }
+        // Actualizar estado
+        await fetch(`${API}/paquetes/${selectedPkgId}/estado`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ estado, descripcion_ubicacion: nota || 'Actualizado por admin' })
+        });
+        closeModal('modal-asignar');
+        toast('Paquete actualizado correctamente', 'green');
+        loadPaquetes();
+      } catch (e) { toast('Error al actualizar: ' + e.message); }
+    }
+
+    // ════════════════════════════════════════
+    //  USUARIOS
+    // ════════════════════════════════════════
+    async function loadUsuarios() {
+      try {
+        const res = await fetch(`${API}/usuarios`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        allUsuarios = data.usuarios || [];
+        renderUsuarios(allUsuarios);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderUsuarios(lista) {
+      const grid = document.getElementById('user-grid');
+      if (!lista.length) { grid.innerHTML = '<div class="empty-state">No hay usuarios</div>'; return; }
+      grid.innerHTML = lista.map(u => `
+    <div class="user-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="user-avatar">${u.nombre.charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="user-name">${u.nombre}</div>
+          <div class="user-email">${u.email}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="badge badge-${u.rol}">${u.rol}</span>
+        <span style="font-size:0.68rem;color:var(--ink2);font-family:var(--font-mono)">${new Date(u.created_at).toLocaleDateString('es-PE')}</span>
+      </div>
+      <div class="user-actions">
+        <button class="btn btn-secondary btn-sm" onclick="cambiarRol(${u.id},'${u.rol}')">Cambiar rol</button>
+        <button class="btn btn-sm" style="background:#fce8e8;color:var(--accent);border:none" onclick="eliminarUsuario(${u.id},'${u.nombre}')">Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    function openModalNuevoUsuario() { openModal('modal-usuario'); }
+
+    async function crearUsuario() {
+      const body = {
+        nombre: document.getElementById('nu-nombre').value,
+        email: document.getElementById('nu-email').value,
+        password: document.getElementById('nu-pass').value,
+        rol: document.getElementById('nu-rol').value,
+      };
+      try {
+        const res = await fetch(`${API}/admin/usuarios`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!data.ok) return toast(data.error);
+        closeModal('modal-usuario');
+        // limpiar campos
+        ['nu-nombre', 'nu-email', 'nu-pass'].forEach(id => document.getElementById(id).value = '');
+        toast('Usuario creado correctamente', 'green');
+        loadUsuarios(); loadDashboard();
+      } catch (e) { toast('Error: ' + e.message); }
+    }
+
+    async function cambiarRol(userId, rolActual) {
+      const roles = ['cliente', 'repartidor', 'admin'];
+      const nuevoRol = prompt(`Rol actual: ${rolActual}\nNuevo rol (cliente / repartidor / admin):`);
+      if (!nuevoRol || !roles.includes(nuevoRol)) return;
+      try {
+        await fetch(`${API}/usuarios/${userId}/rol`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ rol: nuevoRol })
+        });
+        toast(`Rol actualizado a ${nuevoRol}`, 'green');
+        loadUsuarios();
+      } catch (e) { toast('Error: ' + e.message); }
+    }
+
+    async function eliminarUsuario(userId, nombre) {
+      if (!confirm(`¿Eliminar usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
+      try {
+        await fetch(`${API}/usuarios/${userId}`, {
+          method: 'DELETE', headers: { Authorization: `Bearer ${token}` }
+        });
+        toast(`Usuario eliminado`);
+        loadUsuarios(); loadDashboard();
+      } catch (e) { toast('Error: ' + e.message); }
+    }
+
+    // ════════════════════════════════════════
+    //  CHATS
+    // ════════════════════════════════════════
+    async function loadChatList() {
+      try {
+        const res = await fetch(`${API}/paquetes`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        const paquetes = data.paquetes || [];
+        const container = document.getElementById('chat-list-items');
+        if (!paquetes.length) { container.innerHTML = '<div class="empty-state" style="padding:20px;font-size:0.75rem">Sin paquetes</div>'; return; }
+        container.innerHTML = paquetes.map(p => `
+      <div class="chat-list-item" id="cli-${p.id}" onclick="openChat(${p.id},'${p.codigo_tracking}')">
+        <div class="cli-code">${p.codigo_tracking}</div>
+        <div class="cli-preview" id="prev-${p.id}">${p.destinatario_nombre || p.destinatario || '—'}</div>
+        <div class="cli-time"><span class="badge badge-${p.estado}">${p.estado?.replace('_', ' ')}</span></div>
+      </div>
+    `).join('');
+      } catch (e) { console.error(e); }
+    }
+
+    async function openChat(pkgId, codigo) {
+      activeChatPkg = pkgId;
+      document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(`cli-${pkgId}`)?.classList.add('active');
+      if (socket) socket.emit('seguir_paquete', pkgId);
+
+      const main = document.getElementById('chat-main');
+      main.innerHTML = `
+    <div class="chat-main-header">
+      <div>
+        <span style="font-family:var(--font-display);font-size:1rem;letter-spacing:1px">${codigo}</span>
+        <span style="font-size:0.72rem;color:var(--ink2);margin-left:8px;font-family:var(--font-mono)">Paquete #${pkgId}</span>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs-${pkgId}"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-inp" placeholder="Responder como admin..." onkeydown="if(event.key==='Enter')enviarMsg(${pkgId})">
+      <button onclick="enviarMsg(${pkgId})">ENVIAR</button>
+    </div>
+  `;
+
+      try {
+        const res = await fetch(`${API}/paquetes/${pkgId}/mensajes`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        const msgs = data.mensajes || [];
+        if (!msgs.length) {
+          document.getElementById(`chat-msgs-${pkgId}`).innerHTML = '<div class="chat-empty">Sin mensajes aún</div>';
+        } else {
+          msgs.forEach(m => renderMsg({ ...m, timestamp: m.created_at, autor: m.autor, usuario_id: m.usuario_id, contenido: m.contenido }, true));
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    function renderMsg(msg, fromHistory = false) {
+      const container = document.getElementById(`chat-msgs-${activeChatPkg}`);
+      if (!container) return;
+      const isAdmin = msg.usuario_id === currentUser?.id || msg.autor_rol === 'admin';
+      const div = document.createElement('div');
+      div.className = `msg ${isAdmin ? 'admin' : ''}`;
+      div.innerHTML = `
+    <div class="msg-bubble">${msg.contenido}</div>
+    <div class="msg-meta">${msg.autor} · ${new Date(msg.timestamp || msg.created_at).toLocaleTimeString('es-PE')}</div>
+  `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function enviarMsg(pkgId) {
+      const inp = document.getElementById('chat-inp');
+      const contenido = inp.value.trim();
+      if (!contenido || !socket) return;
+      // El servidor guarda y emite de vuelta a todos en la sala (incluido yo)
+      socket.emit('mensaje_paquete', { paquete_id: pkgId, contenido });
+      inp.value = '';
+    }
+
+    function updateChatPreview(msg) {
+      const prev = document.getElementById(`prev-${msg.paquete_id}`);
+      if (prev) prev.textContent = `${msg.autor}: ${msg.contenido.substring(0, 30)}`;
+    }
+
+    // ════════════════════════════════════════
+    //  UI
+    // ════════════════════════════════════════
+    function showPanel(name, btn) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`panel-${name}`).classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function toast(msg, type = '') {
+      const wrap = document.getElementById('toast-wrap');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = msg;
+      wrap.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+  </script>
+</body>
+
+</html>
