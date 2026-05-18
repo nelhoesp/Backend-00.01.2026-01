@@ -5,15 +5,17 @@ const db = new Pool({
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    name: process.env.DB_NAME
+    database: process.env.DB_NAME
 });
 
 const initDatabase = async () => {
+
     await db.query(`
-        CREATE TABLE IF NOT EXISTS producto (
+        CREATE TABLE IF NOT EXISTS products (
             id SERIAL PRIMARY KEY,
+            name VARCHAR(256),
             description TEXT,
-            productname VARCHAR(256)
+            price NUMERIC(10,2)
         )
     `);
 
@@ -25,6 +27,7 @@ const initDatabase = async () => {
             email VARCHAR(256) UNIQUE
         )
     `);
+
 };
 
 initDatabase()

@@ -8,7 +8,7 @@ passport.serializeUser((user,done)=>{
 })
 
 passport.deserializeUser((user,done)=>{
-    dirname(null,user);
+    __dirname(null,user);
 })
 
 passport.use(new GoogleStrategy({

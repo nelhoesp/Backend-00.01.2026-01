@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackaton 16</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+     <h3>Sistema de Pagos</h3>
+
+    <nav>
+        <ul>
+
+            <li>
+                <button onclick="showSection('productsSection')">
+                    Productos
+                </button>
+            </li>
+
+             <li>
+                <button onclick="showSection('carritoSection')">
+                    Mi carrito
+                </button>
+            </li>
+
+            <li>
+                <button onclick="showSection('paymentsSection')">
+                    Pagos
+                </button>
+            </li>
+
+            <li>
+                <button onclick="showSection('purchasesSection')">
+                    Mis compras
+                </button>
+            </li>
+
+            <li>
+                <button onclick="showSection('refundsSection')">
+                    Devoluciones
+                </button>
+            </li>
+
+        </ul>
+    </nav>
+
+    <button class="exit">Salir</button>
+
+    <!-- PRODUCTOS -->
+    <section id="productsSection">
+
+        <h2>Productos</h2>
+
+        <form id="productForm">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Nombre del producto"
+            >
+
+            <textarea
+                id="description"
+                placeholder="Descripción"
+            ></textarea>
+
+            <input
+                type="number"
+                id="price"
+                placeholder="Precio"
+            >
+
+            <button type="submit">
+                Guardar producto
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- MIS COMPRAS -->
+    <section id="purchasesSection" class="hidden">
+
+        <h2>Mis compras</h2>
+
+    </section>
+
+    <!-- PAGOS -->
+    <section id="paymentsSection" class="hidden">
+
+        <h2>Pagos</h2>
+
+    </section>
+
+    <!-- DEVOLUCIONES -->
+    <section id="refundsSection" class="hidden">
+
+        <h2>Devoluciones</h2>
+
+    
+
+
+    
+    <script src="script.js"></script>
+
+</body>
+</html>
